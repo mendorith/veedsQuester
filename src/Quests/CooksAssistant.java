@@ -4,10 +4,14 @@ import com.epicbot.api.shared.APIContext;
 import com.epicbot.api.shared.entity.GroundItem;
 import com.epicbot.api.shared.entity.NPC;
 import com.epicbot.api.shared.entity.SceneObject;
+import com.epicbot.api.shared.methods.IDialogueAPI;
 import com.epicbot.api.shared.methods.IQuestAPI;
 import com.epicbot.api.shared.model.Area;
 import com.epicbot.api.shared.util.time.Time;
 import data.Vars;
+
+import java.awt.*;
+import java.awt.event.KeyEvent;
 
 public class CooksAssistant {
     APIContext ctx;
@@ -19,7 +23,7 @@ public class CooksAssistant {
         GRAIN_FIELD(new Area(3157, 3299, 3162, 3295)),
         MILL_UPPPER(new Area(2, 3163, 3310, 3170, 3303)),
         MILL_LOWER(new Area(3162, 3310, 3170, 3303)),
-        LUMBRIDGE_CASTLE(new Area(3209, 3217, 3212, 3213))
+        LUMBRIDGE_CASTLE(new Area(3205, 3217, 3211, 3212))
         ;
 
         final Area area;
@@ -33,7 +37,7 @@ public class CooksAssistant {
         }
     }
 
-
+    private boolean gatheredItems = true;
     private final String[] requirements = {"Bucket", "Pot", "Egg", "Bucket of milk", "Pot of flour"};
 
     public CooksAssistant(APIContext ctx) {
@@ -43,11 +47,34 @@ public class CooksAssistant {
     public void main() {
         if (!ctx.quests().isStarted(IQuestAPI.Quest.COOKS_ASSISTANT)) {
             startQuest();
-        } else if (!hasRequirements()) {
+        } else if (!gatheredItems) {
             getRequirements();
+        } else {
+            giveStuff();
         }
     }
 
+    private void giveStuff() {
+        if (Locations.LUMBRIDGE_CASTLE.getArea().contains(ctx.localPlayer().getLocation())) {
+            if (ctx.inventory().contains(requirements)) {
+                NPC n = ctx.npcs().query().nameMatches("Cook").results().first();
+                if (n != null) {
+                    if (n.click()) {
+                        Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
+                    }
+                }
+            } else if (ctx.quests().isCompleted(IQuestAPI.Quest.COOKS_ASSISTANT)) {
+                ctx.script().stop("Quest cooks assistant has been completed!");
+            } else {
+                ctx.dialogues().selectContinue();
+            }
+        } else {
+            ctx.walking().walkTo(Locations.LUMBRIDGE_CASTLE.getArea().getRandomTile());
+        }
+    }
+
+    private boolean x = false;
+    private boolean y = false;
     private void startQuest() {
         if (Locations.LUMBRIDGE_CASTLE.getArea().contains(ctx.localPlayer().getLocation())) {
             if (!ctx.dialogues().isDialogueOpen()) {
@@ -58,7 +85,26 @@ public class CooksAssistant {
                     }
                 }
             } else {
-
+                if (ctx.dialogues().getText().equalsIgnoreCase("what am i to do?")) {
+                    ctx.dialogues().selectContinue();
+                } else if (!x) {
+                    ctx.dialogues().selectOption(0);
+                    x = true;
+                } else if (ctx.dialogues().getText().equalsIgnoreCase("what's wrong?")) {
+                    ctx.dialogues().selectContinue();
+                } else if (ctx.dialogues().getText().toLowerCase().startsWith("oh dear, oh dear")) {
+                    ctx.dialogues().selectContinue();
+                } else if (ctx.dialogues().getText().toLowerCase().startsWith("i've forgotten")) {
+                    ctx.dialogues().selectContinue();
+                } else if (!y){
+                    System.out.println("test");
+                    ctx.dialogues().selectOption("Yes.");
+                    y = true;
+                } else if (ctx.dialogues().getText().toLowerCase().contains("yes, i'll help")) {
+                    ctx.dialogues().selectContinue();
+                } else if (ctx.dialogues().getText().toLowerCase().contains("oh thank you")) {
+                    ctx.dialogues().selectContinue();
+                }
             }
         } else {
             ctx.webWalking().walkTo(Locations.LUMBRIDGE_CASTLE.getArea().getRandomTile());
@@ -209,10 +255,8 @@ public class CooksAssistant {
             } else {
                 makeFlour();
             }
+        } else {
+            gatheredItems = true;
         }
-    }
-
-    private boolean hasRequirements() {
-        return ctx.inventory().containsAll(requirements);
     }
 }
