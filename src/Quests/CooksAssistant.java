@@ -37,7 +37,7 @@ public class CooksAssistant {
         }
     }
 
-    private boolean gatheredItems = true;
+    private boolean gatheredItems = false;
     private final String[] requirements = {"Bucket", "Pot", "Egg", "Bucket of milk", "Pot of flour"};
 
     public CooksAssistant(APIContext ctx) {
