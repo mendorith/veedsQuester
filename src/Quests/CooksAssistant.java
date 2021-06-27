@@ -4,14 +4,9 @@ import com.epicbot.api.shared.APIContext;
 import com.epicbot.api.shared.entity.GroundItem;
 import com.epicbot.api.shared.entity.NPC;
 import com.epicbot.api.shared.entity.SceneObject;
-import com.epicbot.api.shared.methods.IDialogueAPI;
 import com.epicbot.api.shared.methods.IQuestAPI;
 import com.epicbot.api.shared.model.Area;
 import com.epicbot.api.shared.util.time.Time;
-import data.Vars;
-
-import java.awt.*;
-import java.awt.event.KeyEvent;
 
 public class CooksAssistant {
     APIContext ctx;
