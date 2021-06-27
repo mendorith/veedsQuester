@@ -12,7 +12,6 @@ public class QuestHandler {
     TheRestlessGhost theRestlessGhost;
     RomeoAndJuliet romeoAndJuliet;
     SheepShearer sheepShearer;
-    ShieldOfArrav shieldOfArrav;
 
     public QuestHandler(APIContext ctx) {
         this.ctx = ctx;
@@ -22,7 +21,6 @@ public class QuestHandler {
         this.theRestlessGhost = new TheRestlessGhost(ctx);
         this.romeoAndJuliet = new RomeoAndJuliet(ctx);
         this.sheepShearer = new SheepShearer(ctx);
-        this.shieldOfArrav = new ShieldOfArrav(ctx);
     }
 
     public void main() {
@@ -37,8 +35,6 @@ public class QuestHandler {
                     romeoAndJuliet.main();
                 } case SHEEP_SHEARER: {
                     sheepShearer.main();
-                } case SHIELD_OF_ARRAV: {
-                    shieldOfArrav.main();
                 }
             }
     }
