@@ -15,6 +15,7 @@ import java.awt.event.KeyEvent;
 
 public class CooksAssistant {
     APIContext ctx;
+    QuestMethods qm;
 
     private enum Locations {
         LUMBRIDGE_STORE(new Area(3214, 3251, 3208, 3242)),
@@ -42,10 +43,14 @@ public class CooksAssistant {
 
     public CooksAssistant(APIContext ctx) {
         this.ctx = ctx;
+        this.qm = new QuestMethods(ctx);
     }
 
     public void main() {
-        if (!ctx.quests().isStarted(IQuestAPI.Quest.COOKS_ASSISTANT)) {
+        Vars.State = "Doing quest Cooks Assistant";
+        if (ctx.quests().isCompleted(IQuestAPI.Quest.COOKS_ASSISTANT)) {
+            Vars.currentQuest = null;
+        } else if (!ctx.quests().isStarted(IQuestAPI.Quest.COOKS_ASSISTANT)) {
             startQuest();
         } else if (!gatheredItems) {
             getRequirements();
@@ -108,56 +113,6 @@ public class CooksAssistant {
             }
         } else {
             ctx.webWalking().walkTo(Locations.LUMBRIDGE_CASTLE.getArea().getRandomTile());
-        }
-    }
-
-    private void withdraw(String item, int amount) {
-        if (ctx.bank().isReachable()) {
-            if (ctx.bank().isOpen()) {
-                if (ctx.bank().contains(item)) {
-                    ctx.bank().withdraw(amount, item);
-                } else {
-                    ctx.script().stop("You don't have " + item + " in your bank.");
-                }
-            } else if (!ctx.bank().isOpen()) {
-                ctx.bank().open();
-            }
-        } else  if (!ctx.bank().isReachable()) {
-            ctx.webWalking().walkToBank();
-        }
-    }
-
-    private void buyItem(Locations location, String item) {
-        if (ctx.inventory().contains("Coins")) {
-            if (location.getArea().contains(ctx.localPlayer().getLocation())) {
-                if (!ctx.store().isOpen()) {
-                    NPC n = ctx.npcs().query().nameMatches("Shop keeper").results().first();
-                    if (n != null) {
-                        if (n.interact("Trade")) {
-                            Time.sleep(1_000, () -> ctx.store().isOpen());
-                        }
-                    }
-                } else if (ctx.store().isOpen()) {
-                    ctx.store().buyOne(item);
-                }
-            } else if (!location.getArea().contains(ctx.localPlayer().getLocation())) {
-                ctx.webWalking().walkTo(location.getArea().getRandomTile());
-            }
-        } else if (!ctx.inventory().contains("Coins")) {
-            withdraw(item, 500);
-        }
-    }
-
-    private void pickupItem(Locations location, String item) {
-        if (location.getArea().contains(ctx.localPlayer().getLocation())) {
-            GroundItem i = ctx.groundItems().query().nameMatches(item).reachable().results().nearest();
-            if (i != null) {
-                if (i.interact("Take")) {
-                    Time.sleep(1_000, () -> ctx.inventory().contains(item));
-                }
-            }
-        } else if (!location.getArea().contains(ctx.localPlayer().getLocation())) {
-            ctx.webWalking().walkTo(location.getArea().getRandomTile());
         }
     }
 
@@ -242,16 +197,16 @@ public class CooksAssistant {
 
     private void getRequirements() {
         if (!ctx.inventory().contains("Egg")) {
-            pickupItem(Locations.CHICKEN_COOP, "Egg");
+            qm.pickupItem(Locations.CHICKEN_COOP.getArea(), "Egg");
         } else if (!ctx.inventory().contains("Bucket of milk")) {
             if (!ctx.inventory().contains("Bucket")) {
-                buyItem(Locations.LUMBRIDGE_STORE, "Bucket");
+                qm.buyItem(Locations.LUMBRIDGE_STORE.getArea(), "Bucket");
             } else {
                 milkCow();
             }
         } else if (!ctx.inventory().contains("Pot of flour")) {
             if (!ctx.inventory().contains("Pot")) {
-                buyItem(Locations.LUMBRIDGE_STORE, "Pot");
+                qm.buyItem(Locations.LUMBRIDGE_STORE.getArea(), "Pot");
             } else {
                 makeFlour();
             }

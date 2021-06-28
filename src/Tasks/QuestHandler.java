@@ -15,11 +15,16 @@ public class QuestHandler {
     }
 
     public void main() {
+        if (Vars.currentQuest != null) {
             switch (Vars.currentQuest) {
                 case COOKS_ASSISTANT : {
                     cooksAssistant.main();
                 }
             }
+        } else {
+            ctx.script().stop("All quests have been completed.");
+        }
+
     }
 
 }
