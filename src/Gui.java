@@ -6,7 +6,6 @@ import data.Vars;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
 
 public class Gui  extends JFrame {
     APIContext ctx;
