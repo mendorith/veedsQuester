@@ -1,25 +1,25 @@
 package Quests;
 
 import com.epicbot.api.shared.APIContext;
-import com.epicbot.api.shared.entity.GroundItem;
 import com.epicbot.api.shared.entity.NPC;
 import com.epicbot.api.shared.entity.SceneObject;
 import com.epicbot.api.shared.methods.IQuestAPI;
 import com.epicbot.api.shared.model.Area;
 import com.epicbot.api.shared.util.time.Time;
+import data.Vars;
 
 public class CooksAssistant {
     APIContext ctx;
     QuestMethods qm;
 
     private enum Locations {
-        LUMBRIDGE_STORE(new Area(3214, 3251, 3208, 3242)),
         CHICKEN_COOP(new Area(3170, 3300, 3184, 3290)),
-        COW_PASTURE(new Area(3251, 3278, 3258, 3270)),
-        GRAIN_FIELD(new Area(3157, 3299, 3162, 3295)),
+        COW_PASTURE(new Area(3251, 3276, 3255, 3273)),
+        GRAIN_FIELD(new Area(3157, 3300, 3162, 3295)),
         MILL_UPPPER(new Area(2, 3163, 3310, 3170, 3303)),
         MILL_LOWER(new Area(3162, 3310, 3170, 3303)),
-        LUMBRIDGE_CASTLE(new Area(3205, 3217, 3211, 3212))
+        LUMBRIDGE_CASTLE(new Area(3205, 3217, 3211, 3212)),
+        LUMBRIDGE_CELLAR(new Area(3216, 9625, 3213, 9623))
         ;
 
         final Area area;
@@ -65,11 +65,11 @@ public class CooksAssistant {
                 }
             } else if (ctx.quests().isCompleted(IQuestAPI.Quest.COOKS_ASSISTANT)) {
                 ctx.script().stop("Quest cooks assistant has been completed!");
-            } else {
+            } else if (ctx.dialogues().canContinue()) {
                 ctx.dialogues().selectContinue();
             }
         } else {
-            ctx.walking().walkTo(Locations.LUMBRIDGE_CASTLE.getArea().getRandomTile());
+            ctx.webWalking().walkTo(Locations.LUMBRIDGE_CASTLE.getArea().getCentralTile());
         }
     }
 
@@ -107,22 +107,22 @@ public class CooksAssistant {
                 }
             }
         } else {
-            ctx.webWalking().walkTo(Locations.LUMBRIDGE_CASTLE.getArea().getRandomTile());
+            ctx.webWalking().walkTo(Locations.LUMBRIDGE_CASTLE.getArea().getCentralTile());
         }
     }
 
     private void milkCow() {
         if (Locations.COW_PASTURE.getArea().contains(ctx.localPlayer().getLocation())) {
             if (ctx.inventory().contains("Bucket")) {
-                NPC n = ctx.npcs().query().nameMatches("Dairy cow").reachable().results().nearest();
+                NPC n = ctx.npcs().query().id(1172).reachable().results().nearest();
                 if (n != null) {
                     if (n.interact("Milk")) {
-                        Time.sleep(1_500, () -> ctx.inventory().contains("Bucket of milk"));
+                        Time.sleep(1_500, () -> ctx.inventory().contains(1927));
                     }
                 }
             }
         } else if(!Locations.COW_PASTURE.getArea().contains(ctx.localPlayer().getLocation())) {
-            ctx.webWalking().walkTo(Locations.COW_PASTURE.getArea().getRandomTile());
+            ctx.webWalking().walkTo(Locations.COW_PASTURE.getArea().getCentralTile());
         }
     }
 
@@ -169,7 +169,7 @@ public class CooksAssistant {
                         }
                     }
                 } else if (!Locations.MILL_UPPPER.getArea().contains(ctx.localPlayer().getLocation())) {
-                    ctx.webWalking().walkTo(Locations.MILL_UPPPER.getArea().getRandomTile());
+                    ctx.webWalking().walkTo(Locations.MILL_UPPPER.getArea().getCentralTile());
                 }
             }
         } else if (!collectedGrain) {
@@ -184,7 +184,7 @@ public class CooksAssistant {
                         }
                     }
                 } else if (!Locations.GRAIN_FIELD.getArea().contains(ctx.localPlayer().getLocation())) {
-                    ctx.webWalking().walkTo(Locations.GRAIN_FIELD.getArea().getRandomTile());
+                    ctx.webWalking().walkTo(Locations.GRAIN_FIELD.getArea().getCentralTile());
                 }
             }
         }
@@ -193,16 +193,16 @@ public class CooksAssistant {
     private void getRequirements() {
         if (!ctx.inventory().contains("Egg")) {
             qm.pickupItem(Locations.CHICKEN_COOP.getArea(), "Egg");
-        } else if (!ctx.inventory().contains("Bucket of milk")) {
+        } else if (!ctx.inventory().contains(1927)) {
             if (!ctx.inventory().contains("Bucket")) {
-                qm.buyItem(Locations.LUMBRIDGE_STORE.getArea(), "Bucket");
+                qm.pickupItem(Locations.LUMBRIDGE_CELLAR.getArea(), "Bucket");
             } else {
                 milkCow();
             }
         } else if (!ctx.inventory().contains("Pot of flour")) {
             if (!ctx.inventory().contains("Pot")) {
-                qm.buyItem(Locations.LUMBRIDGE_STORE.getArea(), "Pot");
-            } else {
+                qm.pickupItem(Locations.LUMBRIDGE_CASTLE.getArea(), "Pot");
+            } else if (ctx.inventory().contains("Pot")) {
                 makeFlour();
             }
         } else {

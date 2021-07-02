@@ -59,7 +59,7 @@ public class QuestMethods {
                 }
             }
         } else if (!location.contains(ctx.localPlayer().getLocation())) {
-            ctx.webWalking().walkTo(location.getRandomTile());
+            ctx.webWalking().walkTo(location.getCentralTile());
         }
     }
 }
