@@ -1,6 +1,8 @@
 package data;
 
 public class Vars {
-    public static QuestsInfo currentQuest = QuestsInfo.COOKS_ASSISTANT;
+    public static boolean start = false;
+
+    public static QuestsInfo currentQuest;
     public static String State = "";
 }

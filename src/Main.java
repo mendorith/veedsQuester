@@ -13,17 +13,20 @@ import java.awt.*;
 @ScriptManifest(name = "veedsQuester", gameType = GameType.OS)
 public class Main extends LoopScript {
 
-    QuestHandler questHandler;
+    private QuestHandler questHandler;
+    private Gui gui;
 
     @Override
     protected int loop() {
-        questHandler.main();
+        if (Vars.start) {
+            questHandler.main();
+        }
         return 500;
     }
 
     @Override
     public boolean onStart(String... strings) {
-        Constants.startTime = System.currentTimeMillis();
+        gui = new Gui(getAPIContext());
         questHandler = new QuestHandler(getAPIContext());
         return true;
     }
