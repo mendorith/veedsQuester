@@ -9,6 +9,7 @@ public class QuestHandler {
 
     CooksAssistant cooksAssistant;
     DemonSlayer demonSlayer;
+    GoblinDiplomacy goblinDiplomacy;
     TheRestlessGhost theRestlessGhost;
     RomeoAndJuliet romeoAndJuliet;
     SheepShearer sheepShearer;
@@ -18,6 +19,7 @@ public class QuestHandler {
 
         this.cooksAssistant = new CooksAssistant(ctx);
         this.demonSlayer = new DemonSlayer(ctx);
+        this.goblinDiplomacy = new GoblinDiplomacy(ctx);
         this.theRestlessGhost = new TheRestlessGhost(ctx);
         this.romeoAndJuliet = new RomeoAndJuliet(ctx);
         this.sheepShearer = new SheepShearer(ctx);
@@ -30,6 +32,8 @@ public class QuestHandler {
                     cooksAssistant.main();
                 } case DEMON_SLAYER: {
                     demonSlayer.main();
+                } case GOBLIN_DIPLOMACY: {
+                    goblinDiplomacy.main();
                 } case THE_RESTLESS_GHOST: {
                     theRestlessGhost.main();
                 } case ROMEO_AND_JULIET: {
