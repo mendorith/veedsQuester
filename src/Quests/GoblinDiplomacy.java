@@ -146,45 +146,34 @@ public class GoblinDiplomacy {
     private boolean gathered_ingredients = false;
     private final String [] ingredients  = {"Redberries", "Woad leaf", "Onion"};
     private void getIngredients() {
-        if (!ctx.inventory().contains("Coins") ||
-        (ctx.inventory().contains("Coins") && (35 > ctx.inventory().getItem("Coins").getStackSize()))) {
+        if (!ctx.inventory().contains("Coins")) {
             qm.withdraw("Coins", 35);
         } //Working
         else if (ctx.inventory().getCount(ingredients[0]) != 3) {
             if (Locations.Redberry_Bushes.getArea().contains(ctx.localPlayer().getLocation())) {
-                SceneObject Bush = ctx.objects().query().id(23628).results().nearest();
-                if (Bush != null) {
-                    if (Bush.interact("Pick-from")) {
-                        Time.sleep(1_500, () -> ctx.inventory().contains("Redberries"));
-                    }
-                }
+                ctx.objects().query().id(23628).results().nearest().interact("Pick-from");
+                Time.sleep(1_500, () -> ctx.inventory().contains("Redberries"));
             } else ctx.webWalking().walkTo(Locations.Redberry_Bushes.getArea().getRandomTile());
-        }//Working
-        else if (ctx.inventory().contains(ingredients[1]) || (ctx.inventory().getItem(ingredients[1]).getStackSize() < 2)) {
+        } //Working
+        else if (!ctx.inventory().contains(ingredients[1]) || ctx.inventory().getItem("Woad leaf").getStackSize() < 2) {
             if (Locations.Falador_Park.getArea().contains(ctx.localPlayer().getLocation())) {
                 if (!ctx.dialogues().isDialogueOpen()) {
-                    NPC gardener = ctx.npcs().query().nameContains("Wyson").results().nearest();
-                    if (gardener != null && gardener.interact("Talk-to"))
-                        Time.sleep(4_000, () -> ctx.dialogues().isDialogueOpen());
-                }
-                else if (ctx.dialogues().getText().contains("I'm the head gardener")) {
+                    ctx.npcs().query().id(5422).results().nearest().interact("Talk-to");
+                } else {
+                    if (ctx.dialogues().getText().contains("I'm the head gardener")) {
                         ctx.dialogues().selectContinue();
-                        ctx.dialogues().getOptions();
+                        Time.sleep(1_000);
                         ctx.dialogues().selectOption(1);
+                    } else if (ctx.dialogues().getText().contains("How much are you")) {
+                        ctx.dialogues().selectContinue();
+                        Time.sleep(1_000);
+                        ctx.dialogues().selectOption(4);
+                        Time.sleep(1_000, () -> ctx.inventory().contains("Woad leaf"));
+                    } else {
+                        ctx.dialogues().selectContinue();
+                    }
                 }
-                else if (ctx.dialogues().getText().contains("How much are you")) {
-                    ctx.dialogues().selectContinue();
-                    ctx.dialogues().getOptions();
-                    ctx.dialogues().selectOption(4);
-                    Time.sleep(1_000, () -> ctx.inventory().contains("Woad leaf"));
-                }
-                else {
-                    ctx.dialogues().selectContinue();
-                }
-            }
-            else {
-                ctx.webWalking().walkTo(Locations.Falador_Park.getArea().getRandomTile());
-            }
+            } else ctx.webWalking().walkTo(Locations.Falador_Park.getArea().getRandomTile());
         } else if (ctx.inventory().getCount(ingredients[2]) != 2) {
             if (Locations.Rimmington_Field.getArea().contains(ctx.localPlayer().getLocation()) ||
                 Locations.Lumbridge_Field.getArea().contains(ctx.localPlayer().getLocation())) {
@@ -201,56 +190,59 @@ public class GoblinDiplomacy {
                 else {
                     ctx.webWalking().walkTo(Locations.Lumbridge_Field.getArea().getRandomTile());
                 }
-            }
+            }//Working
         } else gathered_ingredients = true;
     }
 
     private boolean gathered_dyes = false;
+   // private boolean x = false;
     private final String [] dyes = {"Orange dye", "Blue dye"};
     private void getDye() {
         if (!ctx.inventory().contains(dyes)) {
-            if (Locations.Aggie_House.getArea().contains(ctx.localPlayer().getLocation())) {
+            if (ctx.inventory().contains("Red Dye") && ctx.inventory().contains("Yellow dye")) {
+                ctx.inventory().interactItem("Red dye", "Use");
+                ctx.inventory().selectItem("Yellow dye");
+            }
+            else if (Locations.Aggie_House.getArea().contains(ctx.localPlayer().getLocation())) {
                 if (!ctx.dialogues().isDialogueOpen()) {
-                    NPC witch = ctx.npcs().query().nameMatches("Aggie").results().first();
-                    if (witch != null)
-                        if (witch.interact("Talk-to"))
+                    ctx.npcs().query().id(4284).results().nearest().interact("Talk-to");
                             Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
-                } else if (ctx.dialogues().getText().equalsIgnoreCase("What can I help you with?")) {
-                    ctx.dialogues().selectContinue();
-                    ctx.dialogues().getOptions();
-                    ctx.dialogues().selectOption(4);
-                } else if (ctx.dialogues().getText().startsWith("What sort of dye")) {
-                    ctx.dialogues().selectContinue();
-                    if (!ctx.inventory().contains("Red dye")) {
-                        ctx.dialogues().getOptions();
-                        ctx.dialogues().selectOption(1);
-                        if (ctx.dialogues().getText().contains("lots of redberries")) {
-                            ctx.dialogues().selectContinue();
-                            ctx.dialogues().selectOption(1);
-                        }
-                    } else if (!ctx.inventory().contains("Yellow dye")) {
-                        ctx.dialogues().getOptions();
-                        ctx.dialogues().selectOption(2);
-                        if (ctx.dialogues().getText().toLowerCase().contains("yellow is a strange")) {
-                            ctx.dialogues().selectContinue();
-                            ctx.dialogues().getOptions();
-                            ctx.dialogues().selectOption(1);
-                        } else ctx.dialogues().selectContinue();
-                    } else if (!ctx.inventory().contains(dyes[1])) {
+                } else {
+                    if (ctx.dialogues().getText().toLowerCase().contains("help you with")) {
                         ctx.dialogues().selectContinue();
-                        ctx.dialogues().getOptions();
-                        ctx.dialogues().selectOption(3);
-                        if (ctx.dialogues().getText().toLowerCase().contains("woad leaves and")) {
+                        Time.sleep(1_000);
+                        ctx.dialogues().selectOption("Can you make dyes for me please?");
+                    } else if (ctx.dialogues().getText().startsWith("What sort of dye")) {
+                        if (!ctx.inventory().contains("Red dye")) {
                             ctx.dialogues().selectContinue();
+                            Time.sleep(1_000);
+                            ctx.dialogues().selectOption("What do you need to make red dye?");
+                            if (ctx.dialogues().getText().toLowerCase().contains("redberries and 5 coins")) {
+                                ctx.dialogues().selectContinue();
+                                Time.sleep(1_000);
+                                System.out.println(ctx.dialogues().getDialogueType());
+                                ctx.dialogues().selectOption(1);
+                            } else ctx.dialogues().selectContinue();
+                        } else if (!ctx.inventory().contains("Yellow dye")) {
+                            ctx.dialogues().selectContinue();
+                            Time.sleep(1_500);
+                            ctx.dialogues().selectOption(2);
+                            if (ctx.dialogues().getText().toLowerCase().contains("yellow is a strange")) {
+                                ctx.dialogues().selectContinue();
+                                ctx.dialogues().selectOption(1);
+                            } else ctx.dialogues().selectContinue();
+                        } else if (!ctx.inventory().contains(dyes[1])) {
+                            ctx.dialogues().selectContinue();
+                            Time.sleep(1_000);
+                            ctx.dialogues().selectOption(3);
+                        } if (ctx.dialogues().getText().toLowerCase().contains("woad leaves and")) {
+                            ctx.dialogues().selectContinue();
+                            Time.sleep(1_000);
                             ctx.dialogues().selectOption(1);
                         } else ctx.dialogues().selectContinue();
-                    }
-                    else {
-                        ctx.inventory().interactItem("Red dye", "Use");
-                        ctx.inventory().selectItem("Yellow dye");
-                    }
+                    } else ctx.dialogues().selectContinue();
                 }
-            } else ctx.webWalking().walkTo(Locations.Aggie_House.getArea().getRandomTile());
+            } else ctx.webWalking().walkTo(Locations.Aggie_House.getArea().getCentralTile());
         } else gathered_dyes = true;
     }
 
