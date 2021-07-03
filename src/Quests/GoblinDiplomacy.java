@@ -53,7 +53,7 @@ public class GoblinDiplomacy {
             Vars.currentQuest = null;
         else if (!ctx.quests().isStarted(IQuestAPI.Quest.GOBLIN_DIPLOMACY))
             startQuest();
-        else if (!gatheredItems || ctx.quests().isStarted(IQuestAPI.Quest.GOBLIN_DIPLOMACY))
+        else if (!gatheredItems && ctx.quests().isStarted(IQuestAPI.Quest.GOBLIN_DIPLOMACY))
             getRequirements();
         else give_stuff();
     }
@@ -92,7 +92,7 @@ public class GoblinDiplomacy {
             getMail();//Working
         } else if (!gathered_ingredients || !ctx.inventory().contains(ingredients)) {
             getIngredients();
-        } else if (!gathered_dyes || !ctx.inventory().contains(dyes) && ctx.inventory().contains(ingredients)){
+        } else if (!gathered_dyes || (!ctx.inventory().contains(dyes) && ctx.inventory().contains(ingredients))){
             getDye();
         } else if (!gatheredItems) {
             dyeMail();
