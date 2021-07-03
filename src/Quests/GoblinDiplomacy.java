@@ -1,5 +1,5 @@
 package Quests;
-
+//This is a test to see if GitHub is merging properly
 import com.epicbot.api.shared.APIContext;
 import com.epicbot.api.shared.entity.NPC;
 import com.epicbot.api.shared.entity.SceneObject;
