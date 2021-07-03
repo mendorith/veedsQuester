@@ -89,7 +89,7 @@ public class GoblinDiplomacy {
 
     private void getRequirements() {
         if ((!gatheredMail)|| (ctx.inventory().getCount("Goblin mail") != 3)) {
-            getMail();
+            getMail();//Working
         } else if (!gathered_ingredients || !ctx.inventory().contains(ingredients)) {
             getIngredients();
         } else if (!gathered_dyes || !ctx.inventory().contains(dyes) && ctx.inventory().contains(ingredients)){
@@ -99,43 +99,6 @@ public class GoblinDiplomacy {
         } else {
             give_stuff();
         }
-    }
-
-    private void give_stuff(){
-        if (Locations.General_Hut.getArea().contains(ctx.localPlayer().getLocation())) {
-            if (ctx.inventory().contains(requirements)) {
-                if (ctx.inventory().contains("Orange goblin mail")) {
-                    if (!ctx.dialogues().isDialogueOpen()) {
-                        NPC goblin_general = ctx.npcs().query().nameContains("General").reachable().results().nearest();
-                        if (goblin_general != null) {
-                            ctx.inventory().interactItem("Orange goblin mail", "Use");
-                            goblin_general.interact("Use");
-                            Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
-                        }
-                    } else ctx.dialogues().selectContinue();
-                } else if (ctx.inventory().contains("Blue goblin mail")) {
-                    if (!ctx.dialogues().isDialogueOpen()) {
-                        NPC goblin_general = ctx.npcs().query().nameContains("General").reachable().results().nearest();
-                        if (goblin_general != null) {
-                            ctx.inventory().interactItem("Blue goblin mail", "Use");
-                            goblin_general.interact("Use");
-                            Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
-                        }
-                    } else ctx.dialogues().selectContinue();
-                } else if (ctx.inventory().contains("Goblin mail")) {
-                    if (!ctx.dialogues().isDialogueOpen()) {
-                        NPC goblin_general = ctx.npcs().query().nameContains("General").reachable().results().nearest();
-                        if (goblin_general != null) {
-                            ctx.inventory().interactItem("Goblin mail", "Use");
-                            goblin_general.interact("Use");
-                            Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
-                        }
-                    } else ctx.dialogues().selectContinue();
-                }
-            } else if (ctx.quests().isCompleted(IQuestAPI.Quest.GOBLIN_DIPLOMACY)) {
-                ctx.script().stop("Quest goblin diplomacy has been completed!");
-            }
-        } else ctx.walking().walkTo(Locations.General_Hut.getArea().getRandomTile());
     }
 
     private boolean gatheredMail = false;
@@ -302,5 +265,42 @@ public class GoblinDiplomacy {
                 } else gatheredItems = true;
             }
         }
+    }
+
+    private void give_stuff(){
+        if (Locations.General_Hut.getArea().contains(ctx.localPlayer().getLocation())) {
+            if (ctx.inventory().contains(requirements)) {
+                if (ctx.inventory().contains("Orange goblin mail")) {
+                    if (!ctx.dialogues().isDialogueOpen()) {
+                        NPC goblin_general = ctx.npcs().query().nameContains("General").reachable().results().nearest();
+                        if (goblin_general != null) {
+                            ctx.inventory().interactItem("Orange goblin mail", "Use");
+                            goblin_general.interact("Use");
+                            Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
+                        }
+                    } else ctx.dialogues().selectContinue();
+                } else if (ctx.inventory().contains("Blue goblin mail")) {
+                    if (!ctx.dialogues().isDialogueOpen()) {
+                        NPC goblin_general = ctx.npcs().query().nameContains("General").reachable().results().nearest();
+                        if (goblin_general != null) {
+                            ctx.inventory().interactItem("Blue goblin mail", "Use");
+                            goblin_general.interact("Use");
+                            Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
+                        }
+                    } else ctx.dialogues().selectContinue();
+                } else if (ctx.inventory().contains("Goblin mail")) {
+                    if (!ctx.dialogues().isDialogueOpen()) {
+                        NPC goblin_general = ctx.npcs().query().nameContains("General").reachable().results().nearest();
+                        if (goblin_general != null) {
+                            ctx.inventory().interactItem("Goblin mail", "Use");
+                            goblin_general.interact("Use");
+                            Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
+                        }
+                    } else ctx.dialogues().selectContinue();
+                }
+            } else if (ctx.quests().isCompleted(IQuestAPI.Quest.GOBLIN_DIPLOMACY)) {
+                ctx.script().stop("Quest goblin diplomacy has been completed!");
+            }
+        } else ctx.walking().walkTo(Locations.General_Hut.getArea().getRandomTile());
     }
 }
