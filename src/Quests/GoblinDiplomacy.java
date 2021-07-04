@@ -3,6 +3,7 @@ package Quests;
 import com.epicbot.api.shared.APIContext;
 import com.epicbot.api.shared.entity.NPC;
 import com.epicbot.api.shared.entity.SceneObject;
+import com.epicbot.api.shared.methods.IDialogueAPI;
 import com.epicbot.api.shared.methods.IQuestAPI;
 import com.epicbot.api.shared.model.Area;
 import com.epicbot.api.shared.util.Random;
@@ -15,7 +16,7 @@ public class GoblinDiplomacy {
     QuestMethods qm;
 
     private enum Locations {
-        Aggie_House(new Area(3083, 3261, 3088, 3256)),
+        Aggie_House(new Area(3083, 3261, 3089, 3256)),
         Falador_Park(new Area(3023, 3383, 3028, 3375)),
         General_Crate(new Area(2959, 3515, 2961, 3514)),
         General_Hut(new Area(2956, 3512, 2959, 3510)),
@@ -40,7 +41,6 @@ public class GoblinDiplomacy {
     }
 
     private boolean gatheredItems = false;
-    private final String[] requirements = {"Goblin mail", "Orange goblin mail", "Blue goblin mail"};
 
     public GoblinDiplomacy(APIContext ctx) {
         this.ctx = ctx;
@@ -51,11 +51,15 @@ public class GoblinDiplomacy {
         Vars.State = "Doing quest Goblin Diplomacy";
         if (ctx.quests().isCompleted(IQuestAPI.Quest.GOBLIN_DIPLOMACY))
             Vars.currentQuest = null;
-        else if (!ctx.quests().isStarted(IQuestAPI.Quest.GOBLIN_DIPLOMACY))
+        else if (!ctx.quests().isStarted(IQuestAPI.Quest.GOBLIN_DIPLOMACY)) {
+            Vars.State = "Starting Goblin Diplomacy";
             startQuest();
-        else if (!gatheredItems && ctx.quests().isStarted(IQuestAPI.Quest.GOBLIN_DIPLOMACY))
+        } else if (!gatheredItems && ctx.quests().isStarted(IQuestAPI.Quest.GOBLIN_DIPLOMACY))
             getRequirements();
-        else give_stuff();
+        else {
+            Vars.State = "Finishing up the quest";
+            give_stuff();
+        }
     }
 
     private boolean fatty = false;
@@ -88,39 +92,43 @@ public class GoblinDiplomacy {
     } //Working
 
     private void getRequirements() {
-        if ((!gatheredMail)|| (ctx.inventory().getCount("Goblin mail") != 3)) {
-            getMail();//Working
-        } else if (!gathered_ingredients || !ctx.inventory().contains(ingredients)) {
+        if (!gatheredMail && !ctx.inventory().contains(286, 287)) {
+            Vars.State = "Gathering the Goblin Mail";
+            getMail();
+        } else if (!gathered_ingredients && !ctx.inventory().containsAll(1951, 1793, 1957) &&
+                !ctx.inventory().contains(1763, 1765, 1767, 1769, 286, 287)) {
+            Vars.State = "Getting Ingredients for Dye";
             getIngredients();
-        } else if (!gathered_dyes || (!ctx.inventory().contains(dyes) && ctx.inventory().contains(ingredients))){
+        } else if (!gathered_dyes && !ctx.inventory().contains(286, 287)) {
+            Vars.State = "Getting the Dyes";
             getDye();
-        } else if (!gatheredItems) {
-            dyeMail();
         } else {
-            give_stuff();
+            Vars.State = "Dyeing the Goblin mail";
+            dyeMail();
         }
     }
+
 
     private boolean gatheredMail = false;
     private void getMail() {
         if (!gatheredMail) {
-            if (ctx.inventory().getCount("Goblin mail") == 0) {
+            if (ctx.inventory().getCount(288) == 0) {
                 if (Locations.General_Crate.getArea().contains(ctx.localPlayer().getLocation())) {
                     SceneObject crate1 = ctx.objects().query().id(16559).reachable().results().first();
                     if (crate1 != null && crate1.interact("Search"))
-                        Time.sleep(1_000, () -> ctx.inventory().getCount("Goblin Mail") == 1);
+                        Time.sleep(1_000, () -> ctx.inventory().getCount(288) == 1);
                 } else {
                     ctx.webWalking().walkTo(Locations.General_Crate.getArea().getRandomTile());
                 }
-            } else if (ctx.inventory().getCount("Goblin Mail") == 1) {
+            } else if (ctx.inventory().getCount(288) == 1) {
                 if (Locations.Western_Hut.getArea().contains(ctx.localPlayer().getLocation())) {
                     SceneObject crate2 = ctx.objects().query().id(16560).reachable().results().nearest();
                     if (crate2 != null && crate2.interact("Search"))
-                        Time.sleep(1_000, () -> ctx.inventory().getCount("Goblin Mail") == 2);
+                        Time.sleep(1_000, () -> ctx.inventory().getCount(288) == 2);
                 } else {
                     ctx.webWalking().walkTo(Locations.Western_Hut.getArea().getRandomTile());
                 }
-            } else if ((ctx.inventory().getCount("Goblin Mail") == 2)) {
+            } else if ((ctx.inventory().getCount(288) == 2)) {
                 if (!Locations.Upstairs.getArea().contains(ctx.localPlayer().getLocation())) {
                     ctx.webWalking().walkTo(Locations.Ground_Level.getArea().getRandomTile());
                     SceneObject ladder_up = ctx.objects().query().id(16450).results().first();
@@ -131,9 +139,9 @@ public class GoblinDiplomacy {
                 } else {
                     SceneObject crate3 = ctx.objects().query().id(16561).results().nearest();
                     if (crate3 != null && crate3.interact("Search"))
-                        Time.sleep(1_000, () -> ctx.inventory().getCount("Goblin mail") == 3);
+                        Time.sleep(1_000, () -> ctx.inventory().getCount(288) == 3);
                         }
-            } else if ((ctx.inventory().getCount("Goblin mail") == 3) &&
+            } else if ((ctx.inventory().getCount(288) == 3) &&
                        Locations.Upstairs.getArea().contains(ctx.localPlayer().getLocation())) {
                     SceneObject ladder_down = ctx.objects().query().id(16556).results().nearest();
                     if (ladder_down != null)
@@ -144,21 +152,25 @@ public class GoblinDiplomacy {
     }  //Working
 
     private boolean gathered_ingredients = false;
-    private final String [] ingredients  = {"Redberries", "Woad leaf", "Onion"};
     private void getIngredients() {
-        if (!ctx.inventory().contains("Coins")) {
+        if (!ctx.inventory().contains(995)) {
             qm.withdraw("Coins", 35);
-        } //Working
-        else if (ctx.inventory().getCount(ingredients[0]) != 3) {
+        } else if (ctx.inventory().getCount(1951) != 3 &&
+                 !ctx.inventory().contains(1763,1765,1769)) {
             if (Locations.Redberry_Bushes.getArea().contains(ctx.localPlayer().getLocation())) {
-                ctx.objects().query().id(23628).results().nearest().interact("Pick-from");
-                Time.sleep(1_500, () -> ctx.inventory().contains("Redberries"));
+                SceneObject bush = ctx.objects().query().id(23628).results().nearest();
+                if (bush != null)
+                    if (bush.interact("Pick-from"))
+                        Time.sleep(1_500, () -> ctx.inventory().contains(1951));
             } else ctx.webWalking().walkTo(Locations.Redberry_Bushes.getArea().getRandomTile());
-        } //Working
-        else if (!ctx.inventory().contains(ingredients[1]) || ctx.inventory().getItem("Woad leaf").getStackSize() < 2) {
+        } else if (!ctx.inventory().contains(1767) &&
+                 ctx.inventory().getItem(1793).getStackSize() < 2) {
             if (Locations.Falador_Park.getArea().contains(ctx.localPlayer().getLocation())) {
                 if (!ctx.dialogues().isDialogueOpen()) {
-                    ctx.npcs().query().id(5422).results().nearest().interact("Talk-to");
+                    NPC wyson = ctx.npcs().query().id(5422).results().nearest();
+                    if (wyson != null)
+                        if (wyson.interact("Talk-to"))
+                            Time.sleep(2_000, () -> ctx.dialogues().isDialogueOpen());
                 } else {
                     if (ctx.dialogues().getText().contains("I'm the head gardener")) {
                         ctx.dialogues().selectContinue();
@@ -168,19 +180,20 @@ public class GoblinDiplomacy {
                         ctx.dialogues().selectContinue();
                         Time.sleep(1_000);
                         ctx.dialogues().selectOption(4);
-                        Time.sleep(1_000, () -> ctx.inventory().contains("Woad leaf"));
+                        Time.sleep(1_000, () -> ctx.inventory().contains(1793));
                     } else {
                         ctx.dialogues().selectContinue();
                     }
                 }
-            } else ctx.webWalking().walkTo(Locations.Falador_Park.getArea().getRandomTile());
-        } else if (ctx.inventory().getCount(ingredients[2]) != 2) {
+            } else ctx.webWalking().walkTo(Locations.Falador_Park.getArea().getCentralTile());
+        } else if (ctx.inventory().getCount(1957) != 2 &&
+                   !ctx.inventory().contains(1765, 1769)) {
             if (Locations.Rimmington_Field.getArea().contains(ctx.localPlayer().getLocation()) ||
                 Locations.Lumbridge_Field.getArea().contains(ctx.localPlayer().getLocation())) {
                 SceneObject Onion = ctx.objects().query().id(3366).results().nearest();
                 if (Onion != null) {
                     if (Onion.interact("Pick")) {
-                        Time.sleep(2_000, () -> ctx.inventory().contains("Onion"));
+                        Time.sleep(1_500, () -> ctx.inventory().contains(1957));
                     }
                 }
             } else {
@@ -190,109 +203,99 @@ public class GoblinDiplomacy {
                 else {
                     ctx.webWalking().walkTo(Locations.Lumbridge_Field.getArea().getRandomTile());
                 }
-            }//Working
-        } else gathered_ingredients = true;
-    }
+            }
+        } else {gathered_ingredients = true;System.out.println("Test");}
+    }//Working
 
     private boolean gathered_dyes = false;
-   // private boolean x = false;
-    private final String [] dyes = {"Orange dye", "Blue dye"};
     private void getDye() {
-        if (!ctx.inventory().contains(dyes)) {
-            if (ctx.inventory().contains("Red Dye") && ctx.inventory().contains("Yellow dye")) {
-                ctx.inventory().interactItem("Red dye", "Use");
-                ctx.inventory().selectItem("Yellow dye");
-            }
-            else if (Locations.Aggie_House.getArea().contains(ctx.localPlayer().getLocation())) {
-                if (!ctx.dialogues().isDialogueOpen()) {
-                    ctx.npcs().query().id(4284).results().nearest().interact("Talk-to");
-                            Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
-                } else {
-                    if (ctx.dialogues().getText().toLowerCase().contains("help you with")) {
-                        ctx.dialogues().selectContinue();
-                        Time.sleep(1_000);
-                        ctx.dialogues().selectOption("Can you make dyes for me please?");
-                    } else if (ctx.dialogues().getText().startsWith("What sort of dye")) {
-                        if (!ctx.inventory().contains("Red dye")) {
-                            ctx.dialogues().selectContinue();
-                            Time.sleep(1_000);
-                            ctx.dialogues().selectOption("What do you need to make red dye?");
-                            if (ctx.dialogues().getText().toLowerCase().contains("redberries and 5 coins")) {
+        if (!ctx.inventory().containsAll(1769, 1767)) {
+            if (ctx.inventory().containsAll(1763,1765) || !ctx.inventory().contains(1769)) {
+                ctx.inventory().interactItem("Use",1763);
+                ctx.inventory().selectItem(1765);
+            }else {
+                if (Locations.Aggie_House.getArea().contains(ctx.localPlayer().getLocation())) {
+                    if (!ctx.dialogues().isDialogueOpen()) {
+                        NPC witch = ctx.npcs().query().id(4284).results().nearest();
+                        if (witch != null)
+                            if (witch.interact("Talk-to"))
+                                Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
+                    } else {
+                        if (ctx.dialogues().isDialogueOpen(IDialogueAPI.DialogueType.OPTION)) {
+                            ctx.dialogues().selectOption("Can you make dyes for me please?");
+                            if (!ctx.inventory().contains(1763, 1769)) {
                                 ctx.dialogues().selectContinue();
-                                Time.sleep(1_000);
-                                System.out.println(ctx.dialogues().getDialogueType());
-                                ctx.dialogues().selectOption(1);
-                            } else ctx.dialogues().selectContinue();
-                        } else if (!ctx.inventory().contains("Yellow dye")) {
-                            ctx.dialogues().selectContinue();
-                            Time.sleep(1_500);
-                            ctx.dialogues().selectOption(2);
-                            if (ctx.dialogues().getText().toLowerCase().contains("yellow is a strange")) {
+                                if (ctx.dialogues().isDialogueOpen(IDialogueAPI.DialogueType.OPTION)) {
+                                    ctx.dialogues().selectOption("What do you need to make red dye?");
+                                    if (ctx.dialogues().isDialogueOpen(IDialogueAPI.DialogueType.OPTION)) {
+                                        ctx.dialogues().selectOption("Okay, make me some red dye please.");
+                                    } else ctx.dialogues().selectContinue();
+                                } else ctx.dialogues().selectContinue();
+                            } else if (!ctx.inventory().contains(1765, 1769)) {
                                 ctx.dialogues().selectContinue();
-                                ctx.dialogues().selectOption(1);
+                                if (ctx.dialogues().isDialogueOpen(IDialogueAPI.DialogueType.OPTION)) {
+                                    ctx.dialogues().selectOption("What do you need to make yellow dye?");
+                                    if (ctx.dialogues().isDialogueOpen(IDialogueAPI.DialogueType.OPTION)) {
+                                        ctx.dialogues().selectOption("Okay, make me some yellow dye please.");
+                                    } else ctx.dialogues().selectContinue();
+                                } else ctx.dialogues().selectContinue();
+                            } else if (!ctx.inventory().contains(1767)) {
+                                ctx.dialogues().selectContinue();
+                                if (ctx.dialogues().isDialogueOpen(IDialogueAPI.DialogueType.OPTION)) {
+                                    ctx.dialogues().selectOption("What do you need to make blue dye?");
+                                    if (ctx.dialogues().isDialogueOpen(IDialogueAPI.DialogueType.OPTION)) {
+                                        ctx.dialogues().selectOption("Okay, make me some blue dye please.");
+                                    } else ctx.dialogues().selectContinue();
+                                } else ctx.dialogues().selectContinue();
                             } else ctx.dialogues().selectContinue();
-                        } else if (!ctx.inventory().contains(dyes[1])) {
-                            ctx.dialogues().selectContinue();
-                            Time.sleep(1_000);
-                            ctx.dialogues().selectOption(3);
-                        } if (ctx.dialogues().getText().toLowerCase().contains("woad leaves and")) {
-                            ctx.dialogues().selectContinue();
-                            Time.sleep(1_000);
-                            ctx.dialogues().selectOption(1);
                         } else ctx.dialogues().selectContinue();
-                    } else ctx.dialogues().selectContinue();
-                }
-            } else ctx.webWalking().walkTo(Locations.Aggie_House.getArea().getCentralTile());
+                    }
+                } else ctx.webWalking().walkTo(Locations.Aggie_House.getArea().getCentralTile());
+            }
         } else gathered_dyes = true;
-    }
+    } //Working
 
     private void dyeMail() {
-        if (ctx.inventory().contains("Goblin mail")) {
-            if (ctx.inventory().contains(dyes)) {
-                if (!ctx.inventory().contains(requirements)) {
-                    ctx.inventory().interactItem("Orange dye", "Use");
-                    ctx.inventory().selectItem("Goblin mail");
-                    ctx.inventory().interactItem("Blue dye", "Use");
-                    ctx.inventory().selectItem("Goblin mail");
-                } else gatheredItems = true;
-            }
-        }
-    }
+        if (!ctx.inventory().containsAll(288,287,286) && ctx.inventory().containsAll(1767, 1769)) {
+            ctx.inventory().interactItem("Use",1769);
+            ctx.inventory().selectItem(288);
+            ctx.inventory().interactItem("Use",1767);
+            ctx.inventory().selectItem(288);
+        } else gatheredItems = true;
+    }//Working
 
     private void give_stuff(){
         if (Locations.General_Hut.getArea().contains(ctx.localPlayer().getLocation())) {
-            if (ctx.inventory().contains(requirements)) {
-                if (ctx.inventory().contains("Orange goblin mail")) {
-                    if (!ctx.dialogues().isDialogueOpen()) {
-                        NPC goblin_general = ctx.npcs().query().nameContains("General").reachable().results().nearest();
-                        if (goblin_general != null) {
-                            ctx.inventory().interactItem("Orange goblin mail", "Use");
-                            goblin_general.interact("Use");
-                            Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
-                        }
-                    } else ctx.dialogues().selectContinue();
-                } else if (ctx.inventory().contains("Blue goblin mail")) {
-                    if (!ctx.dialogues().isDialogueOpen()) {
-                        NPC goblin_general = ctx.npcs().query().nameContains("General").reachable().results().nearest();
-                        if (goblin_general != null) {
-                            ctx.inventory().interactItem("Blue goblin mail", "Use");
-                            goblin_general.interact("Use");
-                            Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
-                        }
-                    } else ctx.dialogues().selectContinue();
-                } else if (ctx.inventory().contains("Goblin mail")) {
-                    if (!ctx.dialogues().isDialogueOpen()) {
-                        NPC goblin_general = ctx.npcs().query().nameContains("General").reachable().results().nearest();
-                        if (goblin_general != null) {
-                            ctx.inventory().interactItem("Goblin mail", "Use");
-                            goblin_general.interact("Use");
-                            Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
-                        }
-                    } else ctx.dialogues().selectContinue();
-                }
-            } else if (ctx.quests().isCompleted(IQuestAPI.Quest.GOBLIN_DIPLOMACY)) {
-                ctx.script().stop("Quest goblin diplomacy has been completed!");
+            if (ctx.inventory().contains(286)) {
+                if (!ctx.dialogues().isDialogueOpen()) {
+                    NPC goblin_general = ctx.npcs().query().nameContains("General").reachable().results().nearest();
+                    if (goblin_general != null) {
+                        ctx.inventory().interactItem("Use", 286);
+                        goblin_general.interact("Use");
+                        Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
+                    }
+                } else ctx.dialogues().selectContinue();
+            } else if (ctx.inventory().contains(287)) {
+                if (!ctx.dialogues().isDialogueOpen()) {
+                    NPC goblin_general = ctx.npcs().query().nameContains("General").reachable().results().nearest();
+                    if (goblin_general != null) {
+                        ctx.inventory().interactItem("Use",287);
+                        goblin_general.interact("Use");
+                        Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
+                    }
+                } else ctx.dialogues().selectContinue();
+            } else if (ctx.inventory().contains(288)) {
+                if (!ctx.dialogues().isDialogueOpen()) {
+                    NPC goblin_general = ctx.npcs().query().nameContains("General").reachable().results().nearest();
+                    if (goblin_general != null) {
+                        ctx.inventory().interactItem("Use",288);
+                        goblin_general.interact("Use");
+                        Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
+                    }
+                } else ctx.dialogues().selectContinue();
             }
-        } else ctx.walking().walkTo(Locations.General_Hut.getArea().getRandomTile());
+        } else if (ctx.quests().isCompleted(IQuestAPI.Quest.GOBLIN_DIPLOMACY))
+            ctx.script().stop("Quest goblin diplomacy has been completed!");
+        else ctx.walking().walkTo(Locations.General_Hut.getArea().getRandomTile());
     }
 }

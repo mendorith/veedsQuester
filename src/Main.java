@@ -38,7 +38,7 @@ public class Main extends LoopScript {
             frame.setTitle("veedsQuester");
             frame.addLine("Runtime: ", Time.getFormattedRuntime(Constants.startTime));
             frame.addLine("State: ", Vars.State);
-            frame.draw(g, 0, 0, ctx);
+            frame.draw(g, 0, 24, ctx);
         }
     }
 }
