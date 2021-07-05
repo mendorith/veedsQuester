@@ -266,23 +266,24 @@ public class GoblinDiplomacy {
     }//Working
 
     private void give_stuff() {
-        if (Locations.General_Hut.getArea().contains(ctx.localPlayer().getLocation())
-            && ctx.inventory().contains(286,287,288)) {
-            if (!ctx.dialogues().isDialogueOpen()) {
-                NPC goblin_general = ctx.npcs().query().id(669, 670).reachable().results().nearest();
-                if (goblin_general != null)
-                    if (ctx.inventory().interactItem("Use", 286))
-                        if (goblin_general.interact("Use"))
-                            Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
-                else if (ctx.inventory().interactItem("Use", 287)) {
+        NPC goblin_general = ctx.npcs().query().id(669, 670).reachable().results().nearest();
+        if (goblin_general != null)
+            if (!ctx.dialogues().isDialogueOpen())
+                if (ctx.inventory().contains(286,287,288)) {
+                    ctx.inventory().interactItem("Use", 286);
                     if (goblin_general.interact("Use"))
                         Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
-                else if(ctx.inventory().interactItem("Use", 288))
+                } else if (ctx.inventory().containsAll(287,288)) {
+                    if (ctx.inventory().interactItem("Use", 287))
+                        if (goblin_general.interact("Use"))
+                            Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
+                } else {
+                    ctx.inventory().interactItem("Use", 288);
                     if (goblin_general.interact("Use"))
                         Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
             }else ctx.dialogues().selectContinue();
-        } else if (ctx.quests().isCompleted(IQuestAPI.Quest.GOBLIN_DIPLOMACY))
+        else if (ctx.quests().isCompleted(IQuestAPI.Quest.GOBLIN_DIPLOMACY))
             ctx.script().stop("Quest goblin diplomacy has been completed!");
-        } else ctx.webWalking().walkTo(Locations.General_Hut.getArea().getRandomTile());
+        else ctx.webWalking().walkTo(Locations.General_Hut.getArea().getRandomTile());
     }
 }
