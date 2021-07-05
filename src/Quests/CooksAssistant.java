@@ -18,7 +18,7 @@ public class CooksAssistant {
         GRAIN_FIELD(new Area(3157, 3300, 3162, 3295)),
         MILL_UPPPER(new Area(2, 3163, 3310, 3170, 3303)),
         MILL_LOWER(new Area(3162, 3310, 3170, 3303)),
-        LUMBRIDGE_CASTLE(new Area(3205, 3217, 3211, 3212)),
+        LUMBRIDGE_CASTLE(new Area(3206, 3216, 3211, 3213)),
         LUMBRIDGE_CELLAR(new Area(3216, 9625, 3213, 9623))
         ;
 
@@ -55,7 +55,7 @@ public class CooksAssistant {
     }
 
     private void giveStuff() {
-        if (Locations.LUMBRIDGE_CASTLE.getArea().contains(ctx.localPlayer().getLocation())) {
+        if (ctx.npcs().query().nameMatches("Cook").results().first().canReach(ctx)) {
             if (ctx.inventory().contains(requirements)) {
                 NPC n = ctx.npcs().query().nameMatches("Cook").results().first();
                 if (n != null) {
@@ -63,8 +63,6 @@ public class CooksAssistant {
                         Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
                     }
                 }
-            } else if (ctx.quests().isCompleted(IQuestAPI.Quest.COOKS_ASSISTANT)) {
-                ctx.script().stop("Quest cooks assistant has been completed!");
             } else if (ctx.dialogues().canContinue()) {
                 ctx.dialogues().selectContinue();
             }
@@ -76,7 +74,7 @@ public class CooksAssistant {
     private boolean x = false;
     private boolean y = false;
     private void startQuest() {
-        if (Locations.LUMBRIDGE_CASTLE.getArea().contains(ctx.localPlayer().getLocation())) {
+        if (ctx.npcs().query().nameMatches("Cook").results().first().canReach(ctx)) {
             if (!ctx.dialogues().isDialogueOpen()) {
                 NPC n = ctx.npcs().query().nameMatches("Cook").results().first();
                 if (n != null) {
@@ -97,7 +95,6 @@ public class CooksAssistant {
                 } else if (ctx.dialogues().getText().toLowerCase().startsWith("i've forgotten")) {
                     ctx.dialogues().selectContinue();
                 } else if (!y){
-                    System.out.println("test");
                     ctx.dialogues().selectOption("Yes.");
                     y = true;
                 } else if (ctx.dialogues().getText().toLowerCase().contains("yes, i'll help")) {
@@ -107,12 +104,12 @@ public class CooksAssistant {
                 }
             }
         } else {
-            ctx.webWalking().walkTo(Locations.LUMBRIDGE_CASTLE.getArea().getCentralTile());
+            ctx.webWalking().walkTo(Locations.LUMBRIDGE_CASTLE.getArea().getNearestTile(ctx));
         }
     }
 
     private void milkCow() {
-        if (Locations.COW_PASTURE.getArea().contains(ctx.localPlayer().getLocation())) {
+        if (ctx.npcs().query().id(1172).results().first().canReach(ctx)) {
             if (ctx.inventory().contains("Bucket")) {
                 NPC n = ctx.npcs().query().id(1172).reachable().results().nearest();
                 if (n != null) {
@@ -121,7 +118,7 @@ public class CooksAssistant {
                     }
                 }
             }
-        } else if(!Locations.COW_PASTURE.getArea().contains(ctx.localPlayer().getLocation())) {
+        } else {
             ctx.webWalking().walkTo(Locations.COW_PASTURE.getArea().getCentralTile());
         }
     }
@@ -133,7 +130,6 @@ public class CooksAssistant {
         if (collectedGrain) {
             if (pulledLever) {
                 if (Locations.MILL_LOWER.getArea().contains(ctx.localPlayer().getLocation())) {
-                    System.out.println("test");
                     SceneObject s = ctx.objects().query().id(1781).results().first();
                     if (s != null) {
                         if (s.click()) {
@@ -142,13 +138,11 @@ public class CooksAssistant {
                     }
                 }
                 else if (!Locations.MILL_LOWER.getArea().contains(ctx.localPlayer().getLocation())) {
-                    System.out.println("test");
                     ctx.webWalking().walkTo(Locations.MILL_LOWER.getArea().getCentralTile());
                 }
             } else {
                 if (Locations.MILL_UPPPER.getArea().contains(ctx.localPlayer().getLocation())) {
                     if (grainInHopper) {
-                        System.out.println("test");
                         SceneObject s = ctx.objects().query().id(24964).results().first();
                         if (s != null) {
                             if (s.click()) {
