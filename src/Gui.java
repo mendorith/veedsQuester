@@ -75,7 +75,6 @@ public class Gui  extends JFrame {
     private boolean start() {
         Vars.start = true;
         Vars.currentQuest = (QuestsInfo) questSelector.getSelectedItem();
-        Constants.startTime = System.currentTimeMillis();
         return true;
     }
 }

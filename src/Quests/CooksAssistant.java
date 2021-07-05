@@ -83,24 +83,14 @@ public class CooksAssistant {
                     }
                 }
             } else {
-                if (ctx.dialogues().getText().equalsIgnoreCase("what am i to do?")) {
+                if (ctx.dialogues().canContinue()) {
                     ctx.dialogues().selectContinue();
                 } else if (!x) {
                     ctx.dialogues().selectOption(0);
                     x = true;
-                } else if (ctx.dialogues().getText().equalsIgnoreCase("what's wrong?")) {
-                    ctx.dialogues().selectContinue();
-                } else if (ctx.dialogues().getText().toLowerCase().startsWith("oh dear, oh dear")) {
-                    ctx.dialogues().selectContinue();
-                } else if (ctx.dialogues().getText().toLowerCase().startsWith("i've forgotten")) {
-                    ctx.dialogues().selectContinue();
                 } else if (!y){
                     ctx.dialogues().selectOption("Yes.");
                     y = true;
-                } else if (ctx.dialogues().getText().toLowerCase().contains("yes, i'll help")) {
-                    ctx.dialogues().selectContinue();
-                } else if (ctx.dialogues().getText().toLowerCase().contains("oh thank you")) {
-                    ctx.dialogues().selectContinue();
                 }
             }
         } else {
