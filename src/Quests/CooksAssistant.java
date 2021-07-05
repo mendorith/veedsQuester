@@ -3,7 +3,6 @@ package Quests;
 import com.epicbot.api.shared.APIContext;
 import com.epicbot.api.shared.entity.NPC;
 import com.epicbot.api.shared.entity.SceneObject;
-import com.epicbot.api.shared.methods.IDialogueAPI;
 import com.epicbot.api.shared.methods.IQuestAPI;
 import com.epicbot.api.shared.model.Area;
 import com.epicbot.api.shared.util.time.Time;
@@ -56,37 +55,55 @@ public class CooksAssistant {
     }
 
     private void giveStuff() {
-        NPC n = ctx.npcs().query().nameMatches("Cook").results().first();
-        if (n != null) {
+        if (Locations.LUMBRIDGE_CASTLE.getArea().contains(ctx.localPlayer().getLocation())) {
             if (ctx.inventory().contains(requirements)) {
-                if (n.click()) {
-                    Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
+                NPC n = ctx.npcs().query().nameMatches("Cook").results().first();
+                if (n != null) {
+                    if (n.click()) {
+                        Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
+                    }
                 }
+            } else if (ctx.quests().isCompleted(IQuestAPI.Quest.COOKS_ASSISTANT)) {
+                ctx.script().stop("Quest cooks assistant has been completed!");
+            } else if (ctx.dialogues().canContinue()) {
+                ctx.dialogues().selectContinue();
             }
-        } else if (ctx.quests().isCompleted(IQuestAPI.Quest.COOKS_ASSISTANT)) {
-            ctx.script().stop("Quest cooks assistant has been completed!");
-        } else if (ctx.dialogues().canContinue()) {
-            ctx.dialogues().selectContinue();
-        }
-        else {
+        } else {
             ctx.webWalking().walkTo(Locations.LUMBRIDGE_CASTLE.getArea().getCentralTile());
         }
     }
 
+    private boolean x = false;
+    private boolean y = false;
     private void startQuest() {
-        NPC n = ctx.npcs().query().id(4696).results().first();
-        if (n != null) {
+        if (Locations.LUMBRIDGE_CASTLE.getArea().contains(ctx.localPlayer().getLocation())) {
             if (!ctx.dialogues().isDialogueOpen()) {
-                if (n.interact("Talk-to"))
-                    Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
+                NPC n = ctx.npcs().query().nameMatches("Cook").results().first();
+                if (n != null) {
+                    if (n.click()) {
+                        Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
+                    }
+                }
             } else {
-                if (ctx.dialogues().isDialogueOpen(IDialogueAPI.DialogueType.OPTION))
-                    ctx.dialogues().selectOption("What's wrong?");
-                else if (ctx.dialogues().isDialogueOpen(IDialogueAPI.DialogueType.OPTION))
+                if (ctx.dialogues().getText().equalsIgnoreCase("what am i to do?")) {
+                    ctx.dialogues().selectContinue();
+                } else if (!x) {
+                    ctx.dialogues().selectOption(0);
+                    x = true;
+                } else if (ctx.dialogues().getText().equalsIgnoreCase("what's wrong?")) {
+                    ctx.dialogues().selectContinue();
+                } else if (ctx.dialogues().getText().toLowerCase().startsWith("oh dear, oh dear")) {
+                    ctx.dialogues().selectContinue();
+                } else if (ctx.dialogues().getText().toLowerCase().startsWith("i've forgotten")) {
+                    ctx.dialogues().selectContinue();
+                } else if (!y){
+                    System.out.println("test");
                     ctx.dialogues().selectOption("Yes.");
-                else {
-                    if(ctx.dialogues().canContinue())
-                        ctx.dialogues().selectContinue();
+                    y = true;
+                } else if (ctx.dialogues().getText().toLowerCase().contains("yes, i'll help")) {
+                    ctx.dialogues().selectContinue();
+                } else if (ctx.dialogues().getText().toLowerCase().contains("oh thank you")) {
+                    ctx.dialogues().selectContinue();
                 }
             }
         } else {
@@ -95,12 +112,18 @@ public class CooksAssistant {
     }
 
     private void milkCow() {
-        NPC n = ctx.npcs().query().id(1172).reachable().results().nearest();
-        if (n != null) {
-            if (ctx.inventory().contains("Bucket"))
-                if (n.interact("Milk"))
-                    Time.sleep(1_500, () -> ctx.inventory().contains(1927));
-        } else ctx.webWalking().walkTo(Locations.COW_PASTURE.getArea().getCentralTile());
+        if (Locations.COW_PASTURE.getArea().contains(ctx.localPlayer().getLocation())) {
+            if (ctx.inventory().contains("Bucket")) {
+                NPC n = ctx.npcs().query().id(1172).reachable().results().nearest();
+                if (n != null) {
+                    if (n.interact("Milk")) {
+                        Time.sleep(1_500, () -> ctx.inventory().contains(1927));
+                    }
+                }
+            }
+        } else if(!Locations.COW_PASTURE.getArea().contains(ctx.localPlayer().getLocation())) {
+            ctx.webWalking().walkTo(Locations.COW_PASTURE.getArea().getCentralTile());
+        }
     }
 
     private boolean grainInHopper = false;
@@ -109,40 +132,61 @@ public class CooksAssistant {
     public void makeFlour() {
         if (collectedGrain) {
             if (pulledLever) {
-                SceneObject chute = ctx.objects().query().id(1781).results().first();
-                if (chute != null) {
-                    if (chute.click()) {
-                        Time.sleep(1_000, () -> ctx.inventory().contains("Pot of flour"));
+                if (Locations.MILL_LOWER.getArea().contains(ctx.localPlayer().getLocation())) {
+                    System.out.println("test");
+                    SceneObject s = ctx.objects().query().id(1781).results().first();
+                    if (s != null) {
+                        if (s.click()) {
+                            Time.sleep(1_000, () -> ctx.inventory().contains("Pot of flour"));
+                        }
                     }
                 }
-                else ctx.webWalking().walkTo(Locations.MILL_LOWER.getArea().getCentralTile());
+                else if (!Locations.MILL_LOWER.getArea().contains(ctx.localPlayer().getLocation())) {
+                    System.out.println("test");
+                    ctx.webWalking().walkTo(Locations.MILL_LOWER.getArea().getCentralTile());
+                }
             } else {
-                SceneObject lever = ctx.objects().query().id(24964).results().first();
-                if (lever != null) {
+                if (Locations.MILL_UPPPER.getArea().contains(ctx.localPlayer().getLocation())) {
                     if (grainInHopper) {
                         System.out.println("test");
-                        if (lever.click()) {
-                            Time.sleep(1_000, () -> !ctx.localPlayer().isAnimating());
-                            pulledLever = true;
+                        SceneObject s = ctx.objects().query().id(24964).results().first();
+                        if (s != null) {
+                            if (s.click()) {
+                                Time.sleep(1_000, () -> !ctx.localPlayer().isAnimating());
+                                pulledLever = true;
+                            }
                         }
                     } else {
                         if (!ctx.inventory().contains("Grain")) {
                             grainInHopper = true;
                         } else {
-                            SceneObject hopper = ctx.objects().query().id(24961).results().first();
-                            if (hopper != null)
-                                if (hopper.click())
+                            SceneObject s = ctx.objects().query().id(24961).results().first();
+                            if (s != null) {
+                                if (s.click()) {
                                     Time.sleep(1_000, () -> !ctx.inventory().contains("Grain"));
+                                }
+                            }
                         }
                     }
-                } else ctx.webWalking().walkTo(Locations.MILL_UPPPER.getArea().getCentralTile());
+                } else if (!Locations.MILL_UPPPER.getArea().contains(ctx.localPlayer().getLocation())) {
+                    ctx.webWalking().walkTo(Locations.MILL_UPPPER.getArea().getCentralTile());
+                }
             }
         } else if (!collectedGrain) {
-            SceneObject s = ctx.objects().query().id(15508).reachable().results().nearest();
-            if (s != null) {
-                if (s.click())
-                    Time.sleep(1_000, () -> ctx.inventory().contains("Grain"));
-            } else ctx.webWalking().walkTo(Locations.GRAIN_FIELD.getArea().getCentralTile());
+            if (ctx.inventory().contains("Grain")) {
+                collectedGrain = true;
+            } else {
+                if (Locations.GRAIN_FIELD.getArea().contains(ctx.localPlayer().getLocation())) {
+                    SceneObject s = ctx.objects().query().id(15508).reachable().results().nearest();
+                    if (s != null) {
+                        if (s.click()) {
+                            Time.sleep(1_000, () -> ctx.inventory().contains("Grain"));
+                        }
+                    }
+                } else if (!Locations.GRAIN_FIELD.getArea().contains(ctx.localPlayer().getLocation())) {
+                    ctx.webWalking().walkTo(Locations.GRAIN_FIELD.getArea().getCentralTile());
+                }
+            }
         }
     }
 
