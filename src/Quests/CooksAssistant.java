@@ -18,7 +18,7 @@ public class CooksAssistant {
         GRAIN_FIELD(new Area(3157, 3300, 3162, 3295)),
         MILL_UPPPER(new Area(2, 3163, 3310, 3170, 3303)),
         MILL_LOWER(new Area(3162, 3310, 3170, 3303)),
-        LUMBRIDGE_CASTLE(new Area(3205, 3217, 3211, 3212)),
+        LUMBRIDGE_CASTLE(new Area(3206, 3216, 3211, 3213)),
         LUMBRIDGE_CELLAR(new Area(3216, 9625, 3213, 9623))
         ;
 
@@ -76,7 +76,7 @@ public class CooksAssistant {
     private boolean x = false;
     private boolean y = false;
     private void startQuest() {
-        if (Locations.LUMBRIDGE_CASTLE.getArea().contains(ctx.localPlayer().getLocation())) {
+        if (ctx.npcs().query().nameMatches("Cook").results().first().canReach(ctx)) {
             if (!ctx.dialogues().isDialogueOpen()) {
                 NPC n = ctx.npcs().query().nameMatches("Cook").results().first();
                 if (n != null) {
@@ -107,7 +107,7 @@ public class CooksAssistant {
                 }
             }
         } else {
-            ctx.webWalking().walkTo(Locations.LUMBRIDGE_CASTLE.getArea().getCentralTile());
+            ctx.webWalking().walkTo(Locations.LUMBRIDGE_CASTLE.getArea().getNearestTile(ctx));
         }
     }
 
