@@ -56,8 +56,6 @@ public class GoblinDiplomacy {
     public void do_quest(IQuestAPI.Quest quest) {
 
         switch (getStage(quest)) {
-            case 0:
-                startQuest();
             case 10:
                 getMail();
                 getDye();
@@ -75,10 +73,36 @@ public class GoblinDiplomacy {
     }
 
     public void main() {
+
+        // Switches to next quest when completed
         Vars.State = "Doing quest Goblin Diplomacy";
-        if (ctx.quests().isCompleted(IQuestAPI.Quest.GOBLIN_DIPLOMACY))
+        if (ctx.quests().isCompleted(IQuestAPI.Quest.GOBLIN_DIPLOMACY)) {
             Vars.currentQuest = null;
-        else do_quest(IQuestAPI.Quest.GOBLIN_DIPLOMACY);
+            return;
+        }
+
+        // Starts quest if not started already
+        if (!ctx.quests().isStarted(IQuestAPI.Quest.GOBLIN_DIPLOMACY)) {
+            System.out.println("test");
+            startQuest();
+            return;
+        }
+
+            switch (getStage(IQuestAPI.Quest.GOBLIN_DIPLOMACY)) {
+                case 10:
+                    getMail();
+                    getDye();
+                    getIngredients();
+                    dyeMail();
+                    give_Orange();
+                    break;
+                case 20:
+                    give_Blue();
+                    break;
+                case 30:
+                    give_Brown();
+                    break;
+            }
     }
 
 
