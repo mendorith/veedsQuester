@@ -133,7 +133,6 @@ public class CooksAssistant {
         if (collectedGrain) {
             if (pulledLever) {
                 if (Locations.MILL_LOWER.getArea().contains(ctx.localPlayer().getLocation())) {
-                    System.out.println("test");
                     SceneObject s = ctx.objects().query().id(1781).results().first();
                     if (s != null) {
                         if (s.click()) {
@@ -142,13 +141,11 @@ public class CooksAssistant {
                     }
                 }
                 else if (!Locations.MILL_LOWER.getArea().contains(ctx.localPlayer().getLocation())) {
-                    System.out.println("test");
                     ctx.webWalking().walkTo(Locations.MILL_LOWER.getArea().getCentralTile());
                 }
             } else {
                 if (Locations.MILL_UPPPER.getArea().contains(ctx.localPlayer().getLocation())) {
                     if (grainInHopper) {
-                        System.out.println("test");
                         SceneObject s = ctx.objects().query().id(24964).results().first();
                         if (s != null) {
                             if (s.click()) {
