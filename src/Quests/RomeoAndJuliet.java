@@ -108,7 +108,7 @@ public class RomeoAndJuliet {
                 if (!n.isVisible()) {
                     ctx.camera().turnTo(n);
                 }
-                n.click();
+                n.interact("Talk-to");
                 Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
             }
         } else {
@@ -151,7 +151,7 @@ public class RomeoAndJuliet {
                 if (!n.isVisible()) {
                     ctx.camera().turnTo(n);
                 }
-                n.click();
+                n.interact("Talk-to");
                 Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
             }
         } else {
@@ -187,7 +187,7 @@ public class RomeoAndJuliet {
                 if (!n.isVisible()) {
                     ctx.camera().turnTo(n);
                 }
-                n.click();
+                n.interact("Talk-to");
                 Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
             }
         } else {
@@ -208,7 +208,7 @@ public class RomeoAndJuliet {
                 if (!n.isVisible()) {
                     ctx.camera().turnTo(n);
                 }
-                n.click();
+                n.interact("Talk-to");
                 Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
             }
         } else {
@@ -230,7 +230,7 @@ public class RomeoAndJuliet {
                 if (!n.isVisible()) {
                     ctx.camera().turnTo(n);
                 }
-                n.click();
+                n.interact("Talk-to");
                 Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
             }
         } else {
@@ -255,7 +255,7 @@ public class RomeoAndJuliet {
                 if (!n.isVisible()) {
                     ctx.camera().turnTo(n);
                 }
-                n.click();
+                n.interact("Talk-to");
                 Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
             }
         } else {

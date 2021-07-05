@@ -15,7 +15,6 @@ import java.awt.*;
 public class Main extends LoopScript {
 
     private QuestHandler questHandler;
-    private Gui gui;
     private Profile profile;
 
     @Override
@@ -36,7 +35,7 @@ public class Main extends LoopScript {
         if (getAPIContext().script().getScriptProfile().isPresent()) {
             profile.loadProfile();
         } else {
-            gui = new Gui(getAPIContext());
+            Gui gui = new Gui(getAPIContext());
         }
 
         return true;

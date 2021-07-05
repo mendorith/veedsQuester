@@ -1,5 +1,4 @@
 import com.epicbot.api.shared.APIContext;
-import data.Constants;
 import data.Profile;
 import data.QuestsInfo;
 import data.Vars;
