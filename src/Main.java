@@ -48,6 +48,8 @@ public class Main extends LoopScript {
             PaintFrame frame = new PaintFrame();
             frame.setTitle("veedsQuester");
             frame.addLine("Runtime: ", Time.getFormattedRuntime(Constants.startTime));
+            frame.addLine("", "");
+            frame.addLine("Current quest: ", Vars.currentQuest);
             frame.addLine("State: ", Vars.State);
             frame.draw(g, 0, 0, ctx);
         }

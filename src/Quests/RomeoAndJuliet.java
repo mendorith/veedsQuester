@@ -30,7 +30,7 @@ public class RomeoAndJuliet {
 
         // Starts quest if not started already
         if (!ctx.quests().isStarted(IQuestAPI.Quest.ROMEO_AND_JULIET)) {
-            System.out.println("test");
+            Vars.State = "Starting quest.";
             startQuest();
             return;
         }
@@ -38,18 +38,22 @@ public class RomeoAndJuliet {
         switch (getStage(IQuestAPI.Quest.ROMEO_AND_JULIET)) {
             case 10 :
                 // If need to talk to juliet
+                Vars.State = "Talking to Juliet.";
                 talkToJuliet();
                 break;
             case 20 :
                 // If need to give letter to romeo
+                Vars.State = "Giving letter to Romeo.";
                 giveRomeoLetter();
                 break;
             case 30 :
                 // If need to talk to lawrence
+                Vars.State = "Talking to Lawrence.";
                 talkToLawrence();
                 break;
             case 40 :
                 // If need to talk to apothecary
+                Vars.State = "Getting potion from Apothecary.";
                 if (ctx.inventory().contains(753)) {
                     talkToApothecary();
                 } else {
@@ -57,6 +61,7 @@ public class RomeoAndJuliet {
                 }
                 break;
             case 50 :
+                Vars.State = "Giving potion to Juliet.";
                 if (!ctx.inventory().contains(756)) {
                     // Get potion if it's not in inventory
                     talkToApothecary();
@@ -71,6 +76,7 @@ public class RomeoAndJuliet {
                 break;
             case 60 :
                 // Final convo with romeo
+                Vars.State = "Finishing quest.";
                 if (ctx.vars().getVarbit(IQuestAPI.QuestVarbits.CUTSCENE.getId()) == 1) {
                     cutscene();
                     return;
