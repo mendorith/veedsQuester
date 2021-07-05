@@ -26,7 +26,8 @@ public class Main extends LoopScript {
 
     @Override
     public boolean onStart(String... strings) {
-        gui = new Gui(getAPIContext());
+        Constants.startTime = System.currentTimeMillis();
+//        gui = new Gui(getAPIContext());
         questHandler = new QuestHandler(getAPIContext());
         return true;
     }
