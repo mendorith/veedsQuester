@@ -10,7 +10,7 @@ import data.Vars;
 
 import java.awt.*;
 
-@ScriptManifest(name = "IronmanQuester", gameType = GameType.OS)
+@ScriptManifest(name = "veedsQuester", gameType = GameType.OS)
 public class Main extends LoopScript {
 
     private QuestHandler questHandler;
@@ -35,10 +35,10 @@ public class Main extends LoopScript {
     protected void onPaint(Graphics2D g, APIContext ctx) {
         if (ctx.client().isLoggedIn()) {
             PaintFrame frame = new PaintFrame();
-            frame.setTitle("IronmanQuester");
+            frame.setTitle("veedsQuester");
             frame.addLine("Runtime: ", Time.getFormattedRuntime(Constants.startTime));
             frame.addLine("State: ", Vars.State);
-            frame.draw(g, 0, 24, ctx);
+            frame.draw(g, 0, 0, ctx);
         }
     }
 }

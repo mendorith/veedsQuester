@@ -32,7 +32,7 @@ public class QuestHandler {
                     cooksAssistant.main();
                 } case DEMON_SLAYER: {
                     demonSlayer.main();
-                } case GOBLIN_DIPLOMACY: {
+                }case GOBLIN_DIPLOMACY: {
                     goblinDiplomacy.main();
                 } case THE_RESTLESS_GHOST: {
                     theRestlessGhost.main();
