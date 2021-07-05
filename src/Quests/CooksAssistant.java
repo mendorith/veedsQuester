@@ -63,8 +63,6 @@ public class CooksAssistant {
                         Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
                     }
                 }
-            } else if (ctx.quests().isCompleted(IQuestAPI.Quest.COOKS_ASSISTANT)) {
-                ctx.script().stop("Quest cooks assistant has been completed!");
             } else if (ctx.dialogues().canContinue()) {
                 ctx.dialogues().selectContinue();
             }
@@ -97,7 +95,6 @@ public class CooksAssistant {
                 } else if (ctx.dialogues().getText().toLowerCase().startsWith("i've forgotten")) {
                     ctx.dialogues().selectContinue();
                 } else if (!y){
-                    System.out.println("test");
                     ctx.dialogues().selectOption("Yes.");
                     y = true;
                 } else if (ctx.dialogues().getText().toLowerCase().contains("yes, i'll help")) {
