@@ -6,6 +6,7 @@ import com.epicbot.api.shared.script.ScriptManifest;
 import com.epicbot.api.shared.util.paint.frame.PaintFrame;
 import com.epicbot.api.shared.util.time.Time;
 import data.Constants;
+import data.Profile;
 import data.Vars;
 
 import java.awt.*;
@@ -15,6 +16,7 @@ public class Main extends LoopScript {
 
     private QuestHandler questHandler;
     private Gui gui;
+    private Profile profile;
 
     @Override
     protected int loop() {
@@ -27,8 +29,16 @@ public class Main extends LoopScript {
     @Override
     public boolean onStart(String... strings) {
         Constants.startTime = System.currentTimeMillis();
-//        gui = new Gui(getAPIContext());
+
         questHandler = new QuestHandler(getAPIContext());
+        profile = new Profile(getAPIContext());
+
+        if (getAPIContext().script().getScriptProfile().isPresent()) {
+            profile.loadProfile();
+        } else {
+            gui = new Gui(getAPIContext());
+        }
+
         return true;
     }
 
