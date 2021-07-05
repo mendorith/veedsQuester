@@ -112,7 +112,7 @@ public class CooksAssistant {
     }
 
     private void milkCow() {
-        if (Locations.COW_PASTURE.getArea().contains(ctx.localPlayer().getLocation())) {
+        if (ctx.npcs().query().id(1172).results().first().canReach(ctx)) {
             if (ctx.inventory().contains("Bucket")) {
                 NPC n = ctx.npcs().query().id(1172).reachable().results().nearest();
                 if (n != null) {
@@ -121,7 +121,7 @@ public class CooksAssistant {
                     }
                 }
             }
-        } else if(!Locations.COW_PASTURE.getArea().contains(ctx.localPlayer().getLocation())) {
+        } else {
             ctx.webWalking().walkTo(Locations.COW_PASTURE.getArea().getCentralTile());
         }
     }
