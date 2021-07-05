@@ -55,7 +55,7 @@ public class CooksAssistant {
     }
 
     private void giveStuff() {
-        if (ctx.npcs().query().nameMatches("Cook").results().first().canReach(ctx)) {
+        if (!ctx.npcs().query().nameMatches("Cook").results().isEmpty() && ctx.npcs().query().nameMatches("Cook").results().first().canReach(ctx)) {
             if (ctx.inventory().contains(requirements)) {
                 NPC n = ctx.npcs().query().nameMatches("Cook").results().first();
                 if (n != null) {
@@ -74,7 +74,7 @@ public class CooksAssistant {
     private boolean x = false;
     private boolean y = false;
     private void startQuest() {
-        if (ctx.npcs().query().nameMatches("Cook").results().first().canReach(ctx)) {
+        if (!ctx.npcs().query().nameMatches("Cook").results().isEmpty() && ctx.npcs().query().nameMatches("Cook").results().first().canReach(ctx)) {
             if (!ctx.dialogues().isDialogueOpen()) {
                 NPC n = ctx.npcs().query().nameMatches("Cook").results().first();
                 if (n != null) {
@@ -83,24 +83,14 @@ public class CooksAssistant {
                     }
                 }
             } else {
-                if (ctx.dialogues().getText().equalsIgnoreCase("what am i to do?")) {
+                if (ctx.dialogues().canContinue()) {
                     ctx.dialogues().selectContinue();
                 } else if (!x) {
                     ctx.dialogues().selectOption(0);
                     x = true;
-                } else if (ctx.dialogues().getText().equalsIgnoreCase("what's wrong?")) {
-                    ctx.dialogues().selectContinue();
-                } else if (ctx.dialogues().getText().toLowerCase().startsWith("oh dear, oh dear")) {
-                    ctx.dialogues().selectContinue();
-                } else if (ctx.dialogues().getText().toLowerCase().startsWith("i've forgotten")) {
-                    ctx.dialogues().selectContinue();
                 } else if (!y){
                     ctx.dialogues().selectOption("Yes.");
                     y = true;
-                } else if (ctx.dialogues().getText().toLowerCase().contains("yes, i'll help")) {
-                    ctx.dialogues().selectContinue();
-                } else if (ctx.dialogues().getText().toLowerCase().contains("oh thank you")) {
-                    ctx.dialogues().selectContinue();
                 }
             }
         } else {
@@ -109,7 +99,7 @@ public class CooksAssistant {
     }
 
     private void milkCow() {
-        if (ctx.npcs().query().id(1172).results().first().canReach(ctx)) {
+        if (!ctx.npcs().query().id(1172).results().isEmpty() && ctx.npcs().query().id(1172).results().first().canReach(ctx)) {
             if (ctx.inventory().contains("Bucket")) {
                 NPC n = ctx.npcs().query().id(1172).reachable().results().nearest();
                 if (n != null) {
