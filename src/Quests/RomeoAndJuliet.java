@@ -22,13 +22,13 @@ public class RomeoAndJuliet {
 
     public void main() {
 
-        System.out.println(getStage(IQuestAPI.Quest.ROMEO_AND_JULIET));
-
+        // Switches to next quest when completed
         if (ctx.quests().isCompleted(IQuestAPI.Quest.ROMEO_AND_JULIET)) {
             Vars.currentQuest = null;
             return;
         }
 
+        // Starts quest if not started already
         if (!ctx.quests().isStarted(IQuestAPI.Quest.ROMEO_AND_JULIET)) {
             System.out.println("test");
             startQuest();
@@ -57,10 +57,11 @@ public class RomeoAndJuliet {
                 }
                 break;
             case 50 :
-                // If need to give cadava berries
                 if (!ctx.inventory().contains(756)) {
+                    // Get potion if it's not in inventory
                     talkToApothecary();
                 } else {
+                    //If need to give juliet potion
                     if (ctx.vars().getVarbit(IQuestAPI.QuestVarbits.CUTSCENE.getId()) == 1) {
                         cutscene();
                         return;
@@ -69,6 +70,7 @@ public class RomeoAndJuliet {
                 }
                 break;
             case 60 :
+                // Final convo with romeo
                 if (ctx.vars().getVarbit(IQuestAPI.QuestVarbits.CUTSCENE.getId()) == 1) {
                     cutscene();
                     return;
