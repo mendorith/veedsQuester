@@ -55,7 +55,7 @@ public class CooksAssistant {
     }
 
     private void giveStuff() {
-        if (Locations.LUMBRIDGE_CASTLE.getArea().contains(ctx.localPlayer().getLocation())) {
+        if (ctx.npcs().query().nameMatches("Cook").results().first().canReach(ctx)) {
             if (ctx.inventory().contains(requirements)) {
                 NPC n = ctx.npcs().query().nameMatches("Cook").results().first();
                 if (n != null) {
