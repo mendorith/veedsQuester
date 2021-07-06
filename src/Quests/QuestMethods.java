@@ -3,6 +3,8 @@ package Quests;
 import com.epicbot.api.shared.APIContext;
 import com.epicbot.api.shared.entity.GroundItem;
 import com.epicbot.api.shared.entity.NPC;
+import com.epicbot.api.shared.entity.WidgetChild;
+import com.epicbot.api.shared.methods.IQuestAPI;
 import com.epicbot.api.shared.model.Area;
 import com.epicbot.api.shared.util.time.Time;
 
@@ -11,6 +13,66 @@ public class QuestMethods {
 
     public QuestMethods(APIContext ctx) {
         this.ctx = ctx;
+    }
+
+    public void cutscene() {
+        if (ctx.dialogues().isDialogueOpen()) {
+            if (ctx.dialogues().canContinue()) {
+                ctx.dialogues().selectContinue();
+            }
+        }
+    }
+
+    public int getStage(IQuestAPI.Quest quest){
+        if(quest.getVarPlayer() != null){
+            return ctx.vars().getVarp(quest.getVarPlayer().getId());
+        } else if(quest.getVarbit() != null){
+            return ctx.vars().getVarbit(quest.getVarbit().getId());
+        }
+        return -1;
+    }
+
+    public void talkTo(int id, Area location, String[] chatOptions) {
+        if (ctx.dialogues().isDialogueOpen()) {
+            if (ctx.dialogues().canContinue()) {
+                ctx.dialogues().selectContinue();
+                Time.sleep(4_000, () -> ctx.dialogues().isDialogueOpen());
+            }
+            if (ctx.dialogues().getOptions() != null) {
+                handleOptions(chatOptions);
+            }
+            return;
+        }
+        if (!ctx.npcs().query().id(id).results().isEmpty()) {
+            NPC n = ctx.npcs().query().id(id).results().nearest();
+            if (n != null) {
+                if (!n.isVisible()) {
+                    ctx.camera().turnTo(n);
+                }
+                n.interact("Talk-to");
+                Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
+            }
+        } else {
+            ctx.webWalking().walkTo(location.getCentralTile());
+        }
+    }
+
+    private void handleOptions(String[] chatOptions){
+        String bestOption = getBestDialogOption(chatOptions);
+        if(bestOption != null) {
+            ctx.dialogues().selectOption(bestOption);
+        }
+    }
+
+    protected String getBestDialogOption(String[] dialogOptions){
+        for(String chat : dialogOptions){
+            for(WidgetChild option : ctx.dialogues().getOptions()){
+                if(option.getText().equals(chat)){
+                    return chat;
+                }
+            }
+        }
+        return null;
     }
 
     public void withdraw(String item, int amount) {
