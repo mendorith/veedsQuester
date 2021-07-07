@@ -50,7 +50,6 @@ public class Main extends LoopScript {
             frame.addLine("", "");
             frame.addLine("Current quest: ", Vars.currentQuest);
             frame.addLine("State: ", Vars.State);
-            frame.addLine("Quest State:", Vars.Quest_State);
             frame.draw(g, 0, 0, ctx);
         }
     }
