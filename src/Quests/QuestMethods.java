@@ -16,6 +16,8 @@ public class QuestMethods {
         this.ctx = ctx;
     }
 
+
+    // Interaction methods
     public boolean interactObject(Area location, int id, String interaction) {
         interactObject(null, id, interaction);
         SceneObject s = ctx.objects().query().id(id).results().first();
@@ -29,23 +31,6 @@ public class QuestMethods {
         } else {
             return false;
         }
-    }
-
-    public void cutscene() {
-        if (ctx.dialogues().isDialogueOpen()) {
-            if (ctx.dialogues().canContinue()) {
-                ctx.dialogues().selectContinue();
-            }
-        }
-    }
-
-    public int getStage(IQuestAPI.Quest quest){
-        if(quest.getVarPlayer() != null){
-            return ctx.vars().getVarp(quest.getVarPlayer().getId());
-        } else if(quest.getVarbit() != null){
-            return ctx.vars().getVarbit(quest.getVarbit().getId());
-        }
-        return -1;
     }
 
     public void talkTo(int id, Area location, String[] chatOptions) {
@@ -71,24 +56,6 @@ public class QuestMethods {
         } else {
             ctx.webWalking().walkTo(location.getCentralTile());
         }
-    }
-
-    private void handleOptions(String[] chatOptions){
-        String bestOption = getBestDialogOption(chatOptions);
-        if(bestOption != null) {
-            ctx.dialogues().selectOption(bestOption);
-        }
-    }
-
-    protected String getBestDialogOption(String[] dialogOptions){
-        for(String chat : dialogOptions){
-            for(WidgetChild option : ctx.dialogues().getOptions()){
-                if(option.getText().equals(chat)){
-                    return chat;
-                }
-            }
-        }
-        return null;
     }
 
     public void withdraw(String item, int amount) {
@@ -139,5 +106,44 @@ public class QuestMethods {
         } else if (!location.contains(ctx.localPlayer().getLocation())) {
             ctx.webWalking().walkTo(location.getCentralTile());
         }
+    }
+
+
+    // Dialogue methods
+    private void handleOptions(String[] chatOptions){
+        String bestOption = getBestDialogOption(chatOptions);
+        if(bestOption != null) {
+            ctx.dialogues().selectOption(bestOption);
+        }
+    }
+
+    protected String getBestDialogOption(String[] dialogOptions){
+        for(String chat : dialogOptions){
+            for(WidgetChild option : ctx.dialogues().getOptions()){
+                if(option.getText().equals(chat)){
+                    return chat;
+                }
+            }
+        }
+        return null;
+    }
+
+
+    // Stage methods
+    public void cutscene() {
+        if (ctx.dialogues().isDialogueOpen()) {
+            if (ctx.dialogues().canContinue()) {
+                ctx.dialogues().selectContinue();
+            }
+        }
+    }
+
+    public int getStage(IQuestAPI.Quest quest){
+        if(quest.getVarPlayer() != null){
+            return ctx.vars().getVarp(quest.getVarPlayer().getId());
+        } else if(quest.getVarbit() != null){
+            return ctx.vars().getVarbit(quest.getVarbit().getId());
+        }
+        return -1;
     }
 }
