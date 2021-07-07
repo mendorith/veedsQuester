@@ -17,6 +17,7 @@ public class QuestMethods {
     }
 
     public boolean interactObject(Area location, int id, String interaction) {
+        interactObject(null, id, interaction);
         SceneObject s = ctx.objects().query().id(id).results().first();
         if (s != null && s.canReach(ctx)) {
             s.interact(interaction);
