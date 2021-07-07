@@ -7,5 +7,4 @@ public enum QuestsInfo {
     THE_RESTLESS_GHOST(),
     ROMEO_AND_JULIET(),
     SHEEP_SHEARER()
-    ;
 }
