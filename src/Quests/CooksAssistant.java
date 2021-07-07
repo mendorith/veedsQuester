@@ -59,7 +59,7 @@ public class CooksAssistant {
             if (ctx.inventory().contains(requirements)) {
                 NPC n = ctx.npcs().query().nameMatches("Cook").results().first();
                 if (n != null) {
-                    if (n.click()) {
+                    if (n.interact("Talk-to")) {
                         Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
                     }
                 }
@@ -78,7 +78,7 @@ public class CooksAssistant {
             if (!ctx.dialogues().isDialogueOpen()) {
                 NPC n = ctx.npcs().query().nameMatches("Cook").results().first();
                 if (n != null) {
-                    if (n.click()) {
+                    if (n.interact("Talk-to")) {
                         Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
                     }
                 }

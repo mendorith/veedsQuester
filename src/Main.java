@@ -6,6 +6,7 @@ import com.epicbot.api.shared.script.ScriptManifest;
 import com.epicbot.api.shared.util.paint.frame.PaintFrame;
 import com.epicbot.api.shared.util.time.Time;
 import data.Constants;
+import data.Profile;
 import data.Vars;
 
 import java.awt.*;
@@ -14,7 +15,7 @@ import java.awt.*;
 public class Main extends LoopScript {
 
     private QuestHandler questHandler;
-    private Gui gui;
+    private Profile profile;
 
     @Override
     protected int loop() {
@@ -27,8 +28,16 @@ public class Main extends LoopScript {
     @Override
     public boolean onStart(String... strings) {
         Constants.startTime = System.currentTimeMillis();
-//        gui = new Gui(getAPIContext());
+
         questHandler = new QuestHandler(getAPIContext());
+        profile = new Profile(getAPIContext());
+
+        if (getAPIContext().script().getScriptProfile().isPresent()) {
+            profile.loadProfile();
+        } else {
+            Gui gui = new Gui(getAPIContext());
+        }
+
         return true;
     }
 
@@ -38,6 +47,8 @@ public class Main extends LoopScript {
             PaintFrame frame = new PaintFrame();
             frame.setTitle("veedsQuester");
             frame.addLine("Runtime: ", Time.getFormattedRuntime(Constants.startTime));
+            frame.addLine("", "");
+            frame.addLine("Current quest: ", Vars.currentQuest);
             frame.addLine("State: ", Vars.State);
             frame.addLine("Quest State:", Vars.Quest_State);
             frame.draw(g, 0, 0, ctx);
