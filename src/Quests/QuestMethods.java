@@ -3,6 +3,7 @@ package Quests;
 import com.epicbot.api.shared.APIContext;
 import com.epicbot.api.shared.entity.GroundItem;
 import com.epicbot.api.shared.entity.NPC;
+import com.epicbot.api.shared.entity.SceneObject;
 import com.epicbot.api.shared.entity.WidgetChild;
 import com.epicbot.api.shared.methods.IQuestAPI;
 import com.epicbot.api.shared.model.Area;
@@ -13,6 +14,20 @@ public class QuestMethods {
 
     public QuestMethods(APIContext ctx) {
         this.ctx = ctx;
+    }
+
+    public boolean interactObject(Area location, int id, String interaction) {
+        SceneObject s = ctx.objects().query().id(id).results().first();
+        if (s != null && s.canReach(ctx)) {
+            s.interact(interaction);
+            Time.sleep(3_000, () -> !ctx.localPlayer().isAnimating() && !ctx.localPlayer().isMoving());
+            return true;
+        } else if (location != null) {
+            ctx.webWalking().walkTo(location.getCentralTile());
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public void cutscene() {
