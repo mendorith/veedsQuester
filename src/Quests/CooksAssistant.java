@@ -94,7 +94,7 @@ public class CooksAssistant {
                 }
             }
         } else {
-            ctx.webWalking().walkTo(Locations.LUMBRIDGE_CASTLE.getArea().getNearestTile(ctx));
+            ctx.webWalking().walkTo(Locations.LUMBRIDGE_CASTLE.getArea().getCentralTile());
         }
     }
 
