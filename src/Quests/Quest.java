@@ -3,33 +3,45 @@ package Quests;
 import com.epicbot.api.shared.APIContext;
 import com.epicbot.api.shared.entity.GroundItem;
 import com.epicbot.api.shared.entity.NPC;
+import com.epicbot.api.shared.entity.SceneObject;
 import com.epicbot.api.shared.entity.WidgetChild;
 import com.epicbot.api.shared.methods.IQuestAPI;
 import com.epicbot.api.shared.model.Area;
 import com.epicbot.api.shared.util.time.Time;
+import data.Vars;
 
-public class QuestMethods {
+public class Quest {
     APIContext ctx;
 
-    public QuestMethods(APIContext ctx) {
+    public Quest(APIContext ctx) {
         this.ctx = ctx;
     }
 
-    public void cutscene() {
-        if (ctx.dialogues().isDialogueOpen()) {
-            if (ctx.dialogues().canContinue()) {
-                ctx.dialogues().selectContinue();
-            }
-        }
+    public void main() {
+        System.out.println("Quest not yet completed");
+        Vars.quests = null;
     }
 
-    public int getStage(IQuestAPI.Quest quest){
-        if(quest.getVarPlayer() != null){
-            return ctx.vars().getVarp(quest.getVarPlayer().getId());
-        } else if(quest.getVarbit() != null){
-            return ctx.vars().getVarbit(quest.getVarbit().getId());
+    // Interaction methods
+    public boolean interactObject(Area location, int id, String interaction) {
+        SceneObject s = ctx.objects().query().id(id).results().first();
+        if (s != null && s.canReach(ctx)) {
+            s.interact(interaction);
+            Time.sleep(3_000, () -> !ctx.localPlayer().isAnimating() && !ctx.localPlayer().isMoving());
+            return true;
+        } else if (location != null) {
+            ctx.webWalking().walkTo(location.getCentralTile());
+            return true;
+        } else {
+            return false;
         }
-        return -1;
+    }
+    // Overload
+    public boolean interactObject(int id, String interaction) {
+        return interactObject(null, id, interaction);
+    }
+    public boolean interactObject(int id) {
+        return interactObject(null, id, "");
     }
 
     public void talkTo(int id, Area location, String[] chatOptions) {
@@ -56,23 +68,9 @@ public class QuestMethods {
             ctx.webWalking().walkTo(location.getCentralTile());
         }
     }
-
-    private void handleOptions(String[] chatOptions){
-        String bestOption = getBestDialogOption(chatOptions);
-        if(bestOption != null) {
-            ctx.dialogues().selectOption(bestOption);
-        }
-    }
-
-    protected String getBestDialogOption(String[] dialogOptions){
-        for(String chat : dialogOptions){
-            for(WidgetChild option : ctx.dialogues().getOptions()){
-                if(option.getText().equals(chat)){
-                    return chat;
-                }
-            }
-        }
-        return null;
+    //Overload
+    public void talkTo(int id, Area location) {
+        talkTo(id, location, new String[] {});
     }
 
     public void withdraw(String item, int amount) {
@@ -112,9 +110,9 @@ public class QuestMethods {
         }
     }
 
-    public void pickupItem(Area location, String item) {
-        if (location.contains(ctx.localPlayer().getLocation())) {
-            GroundItem i = ctx.groundItems().query().nameMatches(item).reachable().results().nearest();
+    public void pickupItem(Area location, int item) {
+        GroundItem i = ctx.groundItems().query().id(item).reachable().results().nearest();
+        if (i != null && i.canReach(ctx)) {
             if (i != null) {
                 if (i.interact("Take")) {
                     Time.sleep(1_000, () -> ctx.inventory().contains(item));
@@ -123,5 +121,44 @@ public class QuestMethods {
         } else if (!location.contains(ctx.localPlayer().getLocation())) {
             ctx.webWalking().walkTo(location.getCentralTile());
         }
+    }
+
+
+    // Dialogue methods
+    private void handleOptions(String[] chatOptions){
+        String bestOption = getBestDialogOption(chatOptions);
+        if(bestOption != null) {
+            ctx.dialogues().selectOption(bestOption);
+        }
+    }
+
+    protected String getBestDialogOption(String[] dialogOptions){
+        for(String chat : dialogOptions){
+            for(WidgetChild option : ctx.dialogues().getOptions()){
+                if(option.getText().equals(chat)){
+                    return chat;
+                }
+            }
+        }
+        return null;
+    }
+
+
+    // Stage methods
+    public void cutscene() {
+        if (ctx.dialogues().isDialogueOpen()) {
+            if (ctx.dialogues().canContinue()) {
+                ctx.dialogues().selectContinue();
+            }
+        }
+    }
+
+    public int getStage(IQuestAPI.Quest quest){
+        if(quest.getVarPlayer() != null){
+            return ctx.vars().getVarp(quest.getVarPlayer().getId());
+        } else if(quest.getVarbit() != null){
+            return ctx.vars().getVarbit(quest.getVarbit().getId());
+        }
+        return -1;
     }
 }
