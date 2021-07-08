@@ -1,4 +1,4 @@
-package Quest;
+package Quests;
 
 import com.epicbot.api.shared.APIContext;
 import com.epicbot.api.shared.entity.NPC;
@@ -11,9 +11,9 @@ import com.epicbot.api.shared.util.time.Time;
 import data.Vars;
 
 
-public class GoblinDiplomacy extends Quest{
-   
-    
+public class GoblinDiplomacy extends Quest {
+
+
     private final Area Aggie_House = (new Area(3083, 3261, 3089, 3256));
     private final Area Falador_Park =(new Area(3023, 3383, 3028, 3375));
     private final Area General_Crate =(new Area(2959, 3515, 2961, 3514));
@@ -33,7 +33,7 @@ public class GoblinDiplomacy extends Quest{
     @Override
     public void main() {
 
-        System.out.println(qm.getStage(IQuestAPI.Quest.GOBLIN_DIPLOMACY));
+        System.out.println(getStage(IQuestAPI.Quest.GOBLIN_DIPLOMACY));
 
         // Switches to next quest when completed
         if (ctx.quests().isCompleted(IQuestAPI.Quest.GOBLIN_DIPLOMACY)) {
@@ -41,7 +41,7 @@ public class GoblinDiplomacy extends Quest{
             return;
         }
 
-        switch (qm.getStage(IQuestAPI.Quest.GOBLIN_DIPLOMACY)) {
+        switch (getStage(IQuestAPI.Quest.GOBLIN_DIPLOMACY)) {
             case 0 :
                 // Starts quest if not started already
                 startQuest();
@@ -74,58 +74,36 @@ public class GoblinDiplomacy extends Quest{
         String[] chatOptions = {"Yes, Wartface looks fat", "Do you want me to pick an armour colour for you?",
                                 "What about a different colour?"};
         if (Random.nextInt(0, 100) > 50)
-            qm.talkTo(669,General_Hut,chatOptions);
-        qm.talkTo(670,General_Hut,chatOptions);
+            talkTo(669,General_Hut,chatOptions);
+        talkTo(670,General_Hut,chatOptions);
     } //Working
 
     private boolean gatheredMail;
     private void getMail() {
         Vars.State = "Gathering the Goblin Mail";
-        if (ctx.inventory().getCount(288) == 0) {
-            SceneObject crate1 = ctx.objects().query().id(16559).reachable().results().first();
-            if (crate1 != null) {
-                crate1.interact();
-                Time.sleep(1_000, () -> ctx.inventory().getCount(288) == 1);
-            }
-            ctx.webWalking().walkTo(General_Crate.getCentralTile());
+        if (!ctx.inventory().contains(288)) {
+            interactObject(General_Crate,16559,"Search");
         } else if (ctx.inventory().getCount(288) == 1) {
-            SceneObject crate2 = ctx.objects().query().id(16560).reachable().results().nearest();
             SceneObject Door = ctx.objects().query().id(12444).actions("Open").located(new Tile(2954, 3505, 0)).results().nearest();
             if (Door != null) {
                 if (Door.interact()) {
                     Time.sleep(1_000, () -> !ctx.localPlayer().isMoving());
-                } else if (crate2 != null) {
-                    crate2.interact();
-                    Time.sleep(5_000, () -> ctx.inventory().getCount(288) == 2);
                 }
+                interactObject(Western_Hut, 16560, "Search");
             }
-            ctx.webWalking().walkTo(Western_Hut.getCentralTile());
         } else if ((ctx.inventory().getCount(288) == 2)) {
-            if (!Upstairs.contains(ctx.localPlayer().getLocation())) {
-                ctx.webWalking().walkTo(Ground_Level.getCentralTile());
-                SceneObject ladder_up = ctx.objects().query().id(16450).results().first();
-                if (ladder_up != null) {
-                    if (ladder_up.interact())
-                        Time.sleep(5_000, () -> !ctx.localPlayer().isMoving());
-                }
-            }
-            SceneObject crate3 = ctx.objects().query().id(16561).results().nearest();
-            if (crate3 != null)
-                crate3.interact();
-            Time.sleep(1_000, () -> ctx.inventory().getCount(288) == 3);
-        } else if ((ctx.inventory().getCount(288) == 3) && Upstairs.contains(ctx.localPlayer().getLocation())) {
-            SceneObject ladder_down = ctx.objects().query().id(16556).results().nearest();
-            if (ladder_down != null)
-                if (ladder_down.interact("Climb-down"))
-                    Time.sleep(1_500, () -> !ctx.localPlayer().isMoving());
-        }
-        gatheredMail = true;//Working
-    }
+            if (!Upstairs.contains(ctx.localPlayer().getLocation()))
+                interactObject(Ground_Level,16450,"Climb-up");
+            interactObject(Upstairs,16561,"Search");
+        } else if ((ctx.inventory().getCount(288) == 3) && Upstairs.contains(ctx.localPlayer().getLocation()))
+            interactObject(Upstairs,16556, "Climb-down");
+        gatheredMail = true;
+    }//Working
 
     private boolean gathered_ingredients;
     private void getIngredients() {
         if (!ctx.inventory().contains(995)) {
-            qm.withdraw("Coins", 35);
+            withdraw("Coins", 35);
         } else if (ctx.inventory().getCount(1951) < 3) {
             SceneObject bush = ctx.objects().query().id(23628,26329).results().nearest();
             if (bush != null) {
@@ -134,7 +112,7 @@ public class GoblinDiplomacy extends Quest{
             } ctx.webWalking().walkTo(Redberry_Bushes.getRandomTile());
         } else if (ctx.inventory().getItem(1793) == null) {
             String[] chatOptions = {"Yes please, I need woad leaves.", "How about 20 coins?"};
-            qm.talkTo(5422,Falador_Park,chatOptions);
+            talkTo(5422,Falador_Park,chatOptions);
         } else if ((ctx.inventory().getCount(1957) < 2)) {
             SceneObject Onion = ctx.objects().query().id(3366).results().nearest();
             if (Onion != null) {
@@ -152,18 +130,18 @@ public class GoblinDiplomacy extends Quest{
         if (!ctx.inventory().contains(1763)) {
             String[] chatOptions = {"Can you make dyes for me please?", "What do you need to make red dye?",
                         "Okay, make me some red dye please."};
-            qm.talkTo(4284,Aggie_House,chatOptions);
+            talkTo(4284,Aggie_House,chatOptions);
         } else if (!ctx.inventory().contains(1765)) {
             String[] chatOptions = {"Can you make dyes for me please?", "What do you need to make yellow dye?",
                         "Okay, make me some yellow dye please."};
-            qm.talkTo(4284,Aggie_House,chatOptions);
+            talkTo(4284,Aggie_House,chatOptions);
         } else if (ctx.inventory().containsAll(1763,1765)) {
             ctx.inventory().interactItem("Use", 1763);
             ctx.inventory().selectItem(1765);
         } else if (!ctx.inventory().contains(1767)) {
             String[] chatOptions = {"Can you make dyes for me please?", "What do you need to make blue dye?",
                         "Okay, make me some blue dye please."};
-            qm.talkTo(4284,Aggie_House,chatOptions);
+            talkTo(4284,Aggie_House,chatOptions);
         } gathered_dyes = true;
     }
 

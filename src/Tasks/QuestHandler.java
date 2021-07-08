@@ -8,6 +8,7 @@ public class QuestHandler {
     APIContext ctx;
 
     Quest cooksAssistant;
+    Quest goblinDiplomacy;
     Quest romeoAndJuliet;
     Quest xMarksTheSpot;
 
@@ -15,6 +16,7 @@ public class QuestHandler {
         this.ctx = ctx;
 
         this.cooksAssistant = new CooksAssistant(ctx);
+        this.goblinDiplomacy = new GoblinDiplomacy(ctx);
         this.romeoAndJuliet = new RomeoAndJuliet(ctx);
         this.xMarksTheSpot = new XMarksTheSpot(ctx);
 
@@ -26,6 +28,8 @@ public class QuestHandler {
                 case COOKS_ASSISTANT :
                     cooksAssistant.main();
                     break;
+                case GOBLIN_DIPLOMACY:
+                    goblinDiplomacy.main();
                 case ROMEO_AND_JULIET:
                     romeoAndJuliet.main();
                     break;
