@@ -8,18 +8,22 @@ import com.epicbot.api.shared.entity.WidgetChild;
 import com.epicbot.api.shared.methods.IQuestAPI;
 import com.epicbot.api.shared.model.Area;
 import com.epicbot.api.shared.util.time.Time;
+import data.Vars;
 
-public class QuestMethods {
+public class Quest {
     APIContext ctx;
 
-    public QuestMethods(APIContext ctx) {
+    public Quest(APIContext ctx) {
         this.ctx = ctx;
     }
 
+    public void main() {
+        System.out.println("Quest not yet completed");
+        Vars.quests = null;
+    }
 
     // Interaction methods
     public boolean interactObject(Area location, int id, String interaction) {
-        interactObject(null, id, interaction);
         SceneObject s = ctx.objects().query().id(id).results().first();
         if (s != null && s.canReach(ctx)) {
             s.interact(interaction);
@@ -31,6 +35,13 @@ public class QuestMethods {
         } else {
             return false;
         }
+    }
+    // Overload
+    public boolean interactObject(int id, String interaction) {
+        return interactObject(null, id, interaction);
+    }
+    public boolean interactObject(int id) {
+        return interactObject(null, id, "");
     }
 
     public void talkTo(int id, Area location, String[] chatOptions) {
@@ -56,6 +67,10 @@ public class QuestMethods {
         } else {
             ctx.webWalking().walkTo(location.getCentralTile());
         }
+    }
+    //Overload
+    public void talkTo(int id, Area location) {
+        talkTo(id, location, new String[] {});
     }
 
     public void withdraw(String item, int amount) {
@@ -95,9 +110,9 @@ public class QuestMethods {
         }
     }
 
-    public void pickupItem(Area location, String item) {
-        if (location.contains(ctx.localPlayer().getLocation())) {
-            GroundItem i = ctx.groundItems().query().nameMatches(item).reachable().results().nearest();
+    public void pickupItem(Area location, int item) {
+        GroundItem i = ctx.groundItems().query().id(item).reachable().results().nearest();
+        if (i != null && i.canReach(ctx)) {
             if (i != null) {
                 if (i.interact("Take")) {
                     Time.sleep(1_000, () -> ctx.inventory().contains(item));

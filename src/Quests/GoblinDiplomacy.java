@@ -1,4 +1,4 @@
-package Quests;
+package Quest;
 
 import com.epicbot.api.shared.APIContext;
 import com.epicbot.api.shared.entity.NPC;
@@ -11,12 +11,9 @@ import com.epicbot.api.shared.util.time.Time;
 import data.Vars;
 
 
-public class GoblinDiplomacy {
-    APIContext ctx;
-    QuestMethods qm;
-
-
-
+public class GoblinDiplomacy extends Quest{
+   
+    
     private final Area Aggie_House = (new Area(3083, 3261, 3089, 3256));
     private final Area Falador_Park =(new Area(3023, 3383, 3028, 3375));
     private final Area General_Crate =(new Area(2959, 3515, 2961, 3514));
@@ -31,8 +28,9 @@ public class GoblinDiplomacy {
 
 
 
-    public GoblinDiplomacy(APIContext ctx) {this.ctx = ctx; this.qm = new QuestMethods(ctx);}
+    public GoblinDiplomacy(APIContext ctx) { super(ctx);}
 
+    @Override
     public void main() {
 
         System.out.println(qm.getStage(IQuestAPI.Quest.GOBLIN_DIPLOMACY));
