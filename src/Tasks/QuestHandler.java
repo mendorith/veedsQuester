@@ -7,25 +7,31 @@ import data.Vars;
 public class QuestHandler {
     APIContext ctx;
 
-    CooksAssistant cooksAssistant;
-    RomeoAndJuliet romeoAndJuliet;
+    Quest cooksAssistant;
+    Quest romeoAndJuliet;
+    Quest xMarksTheSpot;
 
     public QuestHandler(APIContext ctx) {
         this.ctx = ctx;
 
         this.cooksAssistant = new CooksAssistant(ctx);
         this.romeoAndJuliet = new RomeoAndJuliet(ctx);
+        this.xMarksTheSpot = new XMarksTheSpot(ctx);
 
     }
 
     public void main() {
         if (Vars.currentQuest != null) {
             switch (Vars.currentQuest) {
-                case COOKS_ASSISTANT : {
+                case COOKS_ASSISTANT :
                     cooksAssistant.main();
-                } case ROMEO_AND_JULIET: {
+                    break;
+                case ROMEO_AND_JULIET:
                     romeoAndJuliet.main();
-                }
+                    break;
+                case X_MARKS_THE_SPOT:
+                    xMarksTheSpot.main();
+                    break;
             }
         } else {
             ctx.script().stop("All quests have been completed.");

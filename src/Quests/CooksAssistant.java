@@ -37,6 +37,7 @@ public class CooksAssistant extends Quest {
     private boolean gatheredItems = false;
     private final String[] requirements = {"Bucket", "Pot", "Egg", "Bucket of milk", "Pot of flour"};
 
+    @Override
     public void main() {
         Vars.State = "Doing quest Cooks Assistant";
         if (ctx.quests().isCompleted(IQuestAPI.Quest.COOKS_ASSISTANT)) {
@@ -172,16 +173,16 @@ public class CooksAssistant extends Quest {
 
     private void getRequirements() {
         if (!ctx.inventory().contains("Egg")) {
-            pickupItem(Locations.CHICKEN_COOP.getArea(), "Egg");
+            pickupItem(Locations.CHICKEN_COOP.getArea(), 1944);
         } else if (!ctx.inventory().contains(1927)) {
             if (!ctx.inventory().contains("Bucket")) {
-                pickupItem(Locations.LUMBRIDGE_CELLAR.getArea(), "Bucket");
+                pickupItem(Locations.LUMBRIDGE_CELLAR.getArea(), 1925);
             } else {
                 milkCow();
             }
         } else if (!ctx.inventory().contains("Pot of flour")) {
             if (!ctx.inventory().contains("Pot")) {
-                pickupItem(Locations.LUMBRIDGE_CASTLE.getArea(), "Pot");
+                pickupItem(Locations.LUMBRIDGE_CASTLE.getArea(), 1931);
             } else if (ctx.inventory().contains("Pot")) {
                 makeFlour();
             }

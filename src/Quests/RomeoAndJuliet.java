@@ -20,6 +20,7 @@ public class RomeoAndJuliet extends Quest{
         super(ctx);
     }
 
+    @Override
     public void main() {
         // Switches to next quest when completed
         if (ctx.quests().isCompleted(IQuestAPI.Quest.ROMEO_AND_JULIET)) {

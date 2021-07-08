@@ -8,6 +8,7 @@ import com.epicbot.api.shared.entity.WidgetChild;
 import com.epicbot.api.shared.methods.IQuestAPI;
 import com.epicbot.api.shared.model.Area;
 import com.epicbot.api.shared.util.time.Time;
+import data.Vars;
 
 public class Quest {
     APIContext ctx;
@@ -16,10 +17,13 @@ public class Quest {
         this.ctx = ctx;
     }
 
+    public void main() {
+        System.out.println("Quest not yet completed");
+        Vars.quests = null;
+    }
 
     // Interaction methods
     public boolean interactObject(Area location, int id, String interaction) {
-        interactObject(null, id, interaction);
         SceneObject s = ctx.objects().query().id(id).results().first();
         if (s != null && s.canReach(ctx)) {
             s.interact(interaction);
@@ -95,9 +99,9 @@ public class Quest {
         }
     }
 
-    public void pickupItem(Area location, String item) {
-        if (location.contains(ctx.localPlayer().getLocation())) {
-            GroundItem i = ctx.groundItems().query().nameMatches(item).reachable().results().nearest();
+    public void pickupItem(Area location, int item) {
+        GroundItem i = ctx.groundItems().query().id(item).reachable().results().nearest();
+        if (i != null && i.canReach(ctx)) {
             if (i != null) {
                 if (i.interact("Take")) {
                     Time.sleep(1_000, () -> ctx.inventory().contains(item));
