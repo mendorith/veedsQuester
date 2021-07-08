@@ -7,40 +7,31 @@ import data.Vars;
 public class QuestHandler {
     APIContext ctx;
 
-    CooksAssistant cooksAssistant;
-    DemonSlayer demonSlayer;
-    GoblinDiplomacy goblinDiplomacy;
-    TheRestlessGhost theRestlessGhost;
-    RomeoAndJuliet romeoAndJuliet;
-    SheepShearer sheepShearer;
+    Quest cooksAssistant;
+    Quest romeoAndJuliet;
+    Quest xMarksTheSpot;
 
     public QuestHandler(APIContext ctx) {
         this.ctx = ctx;
 
         this.cooksAssistant = new CooksAssistant(ctx);
-        this.demonSlayer = new DemonSlayer(ctx);
-        this.goblinDiplomacy = new GoblinDiplomacy(ctx);
-        this.theRestlessGhost = new TheRestlessGhost(ctx);
         this.romeoAndJuliet = new RomeoAndJuliet(ctx);
-        this.sheepShearer = new SheepShearer(ctx);
+        this.xMarksTheSpot = new XMarksTheSpot(ctx);
+
     }
 
     public void main() {
         if (Vars.currentQuest != null) {
             switch (Vars.currentQuest) {
-                case COOKS_ASSISTANT : {
+                case COOKS_ASSISTANT :
                     cooksAssistant.main();
-                } case DEMON_SLAYER: {
-                    demonSlayer.main();
-                }case GOBLIN_DIPLOMACY: {
-                    goblinDiplomacy.main();
-                } case THE_RESTLESS_GHOST: {
-                    theRestlessGhost.main();
-                } case ROMEO_AND_JULIET: {
+                    break;
+                case ROMEO_AND_JULIET:
                     romeoAndJuliet.main();
-                } case SHEEP_SHEARER: {
-                    sheepShearer.main();
-                }
+                    break;
+                case X_MARKS_THE_SPOT:
+                    xMarksTheSpot.main();
+                    break;
             }
         } else {
             ctx.script().stop("All quests have been completed.");
