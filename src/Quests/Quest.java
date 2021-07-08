@@ -9,10 +9,10 @@ import com.epicbot.api.shared.methods.IQuestAPI;
 import com.epicbot.api.shared.model.Area;
 import com.epicbot.api.shared.util.time.Time;
 
-public class QuestMethods {
+public class Quest {
     APIContext ctx;
 
-    public QuestMethods(APIContext ctx) {
+    public Quest(APIContext ctx) {
         this.ctx = ctx;
     }
 

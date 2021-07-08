@@ -8,9 +8,10 @@ import com.epicbot.api.shared.model.Area;
 import com.epicbot.api.shared.util.time.Time;
 import data.Vars;
 
-public class CooksAssistant {
-    APIContext ctx;
-    QuestMethods qm;
+public class CooksAssistant extends Quest {
+    public CooksAssistant(APIContext ctx) {
+        super(ctx);
+    }
 
     private enum Locations {
         CHICKEN_COOP(new Area(3170, 3300, 3184, 3290)),
@@ -35,11 +36,6 @@ public class CooksAssistant {
 
     private boolean gatheredItems = false;
     private final String[] requirements = {"Bucket", "Pot", "Egg", "Bucket of milk", "Pot of flour"};
-
-    public CooksAssistant(APIContext ctx) {
-        this.ctx = ctx;
-        this.qm = new QuestMethods(ctx);
-    }
 
     public void main() {
         Vars.State = "Doing quest Cooks Assistant";
@@ -176,16 +172,16 @@ public class CooksAssistant {
 
     private void getRequirements() {
         if (!ctx.inventory().contains("Egg")) {
-            qm.pickupItem(Locations.CHICKEN_COOP.getArea(), "Egg");
+            pickupItem(Locations.CHICKEN_COOP.getArea(), "Egg");
         } else if (!ctx.inventory().contains(1927)) {
             if (!ctx.inventory().contains("Bucket")) {
-                qm.pickupItem(Locations.LUMBRIDGE_CELLAR.getArea(), "Bucket");
+                pickupItem(Locations.LUMBRIDGE_CELLAR.getArea(), "Bucket");
             } else {
                 milkCow();
             }
         } else if (!ctx.inventory().contains("Pot of flour")) {
             if (!ctx.inventory().contains("Pot")) {
-                qm.pickupItem(Locations.LUMBRIDGE_CASTLE.getArea(), "Pot");
+                pickupItem(Locations.LUMBRIDGE_CASTLE.getArea(), "Pot");
             } else if (ctx.inventory().contains("Pot")) {
                 makeFlour();
             }
