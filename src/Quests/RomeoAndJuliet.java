@@ -8,8 +8,6 @@ import com.epicbot.api.shared.util.time.Time;
 import data.Vars;
 
 public class RomeoAndJuliet extends Quest{
-    APIContext ctx;
-
     private final Area varrockSquare = new Area(3206, 3435, 3220, 3422);
     private final Area balcony = new Area(1, 3156, 3426, 3160, 3425);
     private final Area church = new Area(3253, 3483, 3256, 3480);
