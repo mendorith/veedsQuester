@@ -53,8 +53,6 @@ public class XMarksTheSpot extends Quest{
                 digSpot(fourthSpot);
                 break;
             case 6:
-                talkTo(8484, dock, new String[] {});
-                break;
             case 7:
                 talkTo(8484, dock, new String[] {});
                 break;
