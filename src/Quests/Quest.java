@@ -36,6 +36,13 @@ public class Quest {
             return false;
         }
     }
+    // Overload
+    public boolean interactObject(int id, String interaction) {
+        return interactObject(null, id, interaction);
+    }
+    public boolean interactObject(int id) {
+        return interactObject(null, id, "");
+    }
 
     public void talkTo(int id, Area location, String[] chatOptions) {
         if (ctx.dialogues().isDialogueOpen()) {
@@ -60,6 +67,10 @@ public class Quest {
         } else {
             ctx.webWalking().walkTo(location.getCentralTile());
         }
+    }
+    //Overload
+    public void talkTo(int id, Area location) {
+        talkTo(id, location, new String[] {});
     }
 
     public void withdraw(String item, int amount) {

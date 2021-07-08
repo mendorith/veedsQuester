@@ -38,7 +38,7 @@ public class XMarksTheSpot extends Quest{
                 }
                 break;
             case 1:
-                talkTo(8484, lumbridgePub, new String[] {});
+                talkTo(8484, lumbridgePub);
                 break;
             case 2:
                 digSpot(firstSpot);
@@ -54,7 +54,7 @@ public class XMarksTheSpot extends Quest{
                 break;
             case 6:
             case 7:
-                talkTo(8484, dock, new String[] {});
+                talkTo(8484, dock);
                 break;
         }
     }
