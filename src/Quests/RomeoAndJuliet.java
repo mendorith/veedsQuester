@@ -7,9 +7,8 @@ import com.epicbot.api.shared.model.Area;
 import com.epicbot.api.shared.util.time.Time;
 import data.Vars;
 
-public class RomeoAndJuliet {
+public class RomeoAndJuliet extends Quest{
     APIContext ctx;
-    QuestMethods qm;
 
     private final Area varrockSquare = new Area(3206, 3435, 3220, 3422);
     private final Area balcony = new Area(1, 3156, 3426, 3160, 3425);
@@ -17,17 +16,19 @@ public class RomeoAndJuliet {
     private final Area berries = new Area(3268, 3374, 3275, 3364);
     private final Area potionShop = new Area(3193, 3405, 3197, 3403);
 
-    public RomeoAndJuliet(APIContext ctx) { this.ctx = ctx; this.qm = new QuestMethods(ctx); }
+    public RomeoAndJuliet(APIContext ctx) {
+        super(ctx);
+    }
 
+    @Override
     public void main() {
-
         // Switches to next quest when completed
         if (ctx.quests().isCompleted(IQuestAPI.Quest.ROMEO_AND_JULIET)) {
             Vars.currentQuest = null;
             return;
         }
 
-        switch (qm.getStage(IQuestAPI.Quest.ROMEO_AND_JULIET)) {
+        switch (getStage(IQuestAPI.Quest.ROMEO_AND_JULIET)) {
             case 0 :
                 // Starts quest if not started already
                 Vars.State = "Starting quest.";
@@ -65,7 +66,7 @@ public class RomeoAndJuliet {
                 } else {
                     //If need to give juliet potion
                     if (ctx.vars().getVarbit(IQuestAPI.QuestVarbits.CUTSCENE.getId()) == 1) {
-                        qm.cutscene();
+                        cutscene();
                         return;
                     }
                     talkToJuliet();
@@ -75,7 +76,7 @@ public class RomeoAndJuliet {
                 // Final convo with romeo
                 Vars.State = "Finishing quest.";
                 if (ctx.vars().getVarbit(IQuestAPI.QuestVarbits.CUTSCENE.getId()) == 1) {
-                    qm.cutscene();
+                    cutscene();
                     return;
                 }
                 talkToRomeo();
@@ -84,12 +85,12 @@ public class RomeoAndJuliet {
     }
 
     private void talkToRomeo() {
-        qm.talkTo(5037, varrockSquare, new String[] {});
+        talkTo(5037, varrockSquare, new String[] {});
     }
 
     private void talkToApothecary() {
         String[] chatOptions = {"Talk about something else.", "Talk about Romeo & Juliet."};
-        qm.talkTo(5036, potionShop, chatOptions);
+        talkTo(5036, potionShop, chatOptions);
     }
 
     private void getBerries() {
@@ -108,19 +109,19 @@ public class RomeoAndJuliet {
     }
 
     private void talkToLawrence() {
-        qm.talkTo(5038, church, new String[] {});
+        talkTo(5038, church, new String[] {});
     }
 
     private void giveRomeoLetter() {
-        qm.talkTo(5037, varrockSquare, new String[] {});
+        talkTo(5037, varrockSquare, new String[] {});
     }
 
     private void talkToJuliet() {
-        qm.talkTo(5035, balcony, new String[] {});
+        talkTo(5035, balcony, new String[] {});
     }
 
     private void startQuest() {
         String[] chatOptions = {"Yes, I have seen her actually!", "Yes."};
-        qm.talkTo(5037, varrockSquare, chatOptions);
+        talkTo(5037, varrockSquare, chatOptions);
     }
 }
