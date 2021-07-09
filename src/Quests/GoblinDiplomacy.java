@@ -39,33 +39,30 @@ public class GoblinDiplomacy extends Quest {
         if (ctx.quests().isCompleted(IQuestAPI.Quest.GOBLIN_DIPLOMACY)) {
             Vars.currentQuest = null;
             return;
-        }
+        } else if (!ctx.quests().isStarted((IQuestAPI.Quest.GOBLIN_DIPLOMACY)))
+            startQuest();
 
         switch (getStage(IQuestAPI.Quest.GOBLIN_DIPLOMACY)) {
-            case 0 :
-                // Starts quest if not started already
+            case 3:
+                if (ctx.inventory().containsAll(286, 287, 288))
+                    give_Orange();
+                else if (ctx.inventory().containsAll(1767, 1769))
+                    dyeMail();
+                getMail();
+                getIngredients();
+                getDyes();
+                break;
+            case 0:
                 startQuest();
                 break;
-            case 3:
-                if (!ctx.inventory().contains(286,287,288)) {
-                  if (!mail_dyed) {
-                    if (!gathered_dyes) {
-                      if (!gathered_ingredients) {
-                        if (!gatheredMail) {
-                          getMail();
-                        } getIngredients();
-                      } getDyes();
-                    } dyeMail();
-                  } give_Orange();
-                } break;
-                case 4:
-                    give_Blue();
-                    break;
-                case 5:
-                    give_Brown();
-                    break;
+            case 4:
+                give_Blue();
+                break;
+            case 5:
+                give_Brown();
+                break;
+            }
         }
-    }
 
 
 
@@ -78,74 +75,70 @@ public class GoblinDiplomacy extends Quest {
         talkTo(670,General_Hut,chatOptions);
     } //Working
 
-    private boolean gatheredMail;
     private void getMail() {
         Vars.State = "Gathering the Goblin Mail";
-        if (!ctx.inventory().contains(288)) {
-            interactObject(General_Crate,16559,"Search");
-        } else if (ctx.inventory().getCount(288) == 1) {
-            SceneObject Door = ctx.objects().query().id(12444).actions("Open").located(new Tile(2954, 3505, 0)).results().nearest();
-            if (Door != null) {
-                if (Door.interact()) {
-                    Time.sleep(1_000, () -> !ctx.localPlayer().isMoving());
-                }
-                interactObject(Western_Hut, 16560, "Search");
-            }
-        } else if ((ctx.inventory().getCount(288) == 2)) {
-            if (!Upstairs.contains(ctx.localPlayer().getLocation()))
-                interactObject(Ground_Level,16450,"Climb-up");
-            interactObject(Upstairs,16561,"Search");
-        } else if ((ctx.inventory().getCount(288) == 3) && Upstairs.contains(ctx.localPlayer().getLocation()))
-            interactObject(Upstairs,16556, "Climb-down");
-        gatheredMail = true;
+        if (!ctx.inventory().contains(286,287))
+            if (!ctx.inventory().contains(288)) {
+                interactObject(General_Crate,16559,"Search");
+            } else if (ctx.inventory().getCount(288) == 1) {
+                SceneObject Door = ctx.objects().query().id(12444).actions("Open").located(new Tile(2954, 3505, 0)).results().nearest();
+                if (Door != null) {
+                    if (Door.interact("Open"))
+                        Time.sleep(5_000, () -> !ctx.localPlayer().isMoving());
+                } interactObject(Western_Hut, 16560, "Search");
+            } else if ((ctx.inventory().getCount(288) == 2)) {
+                if (!Upstairs.contains(ctx.localPlayer().getLocation()))
+                    interactObject(Ground_Level,16450,"Climb-up");
+                interactObject(Upstairs,16561,"Search");
+            } else if (ctx.inventory().getCount(288) == 3)
+                interactObject(Upstairs,16556, "Climb-down");
     }//Working
 
-    private boolean gathered_ingredients;
     private void getIngredients() {
-        if (!ctx.inventory().contains(995)) {
+        if (!ctx.inventory().contains(995))
             withdraw("Coins", 35);
-        } else if (ctx.inventory().getCount(1951) < 3) {
-            SceneObject bush = ctx.objects().query().id(23628,26329).results().nearest();
-            if (bush != null) {
-                if (bush.interact("Pick-from"))
-                    Time.sleep(1_500, () -> ctx.inventory().contains(1951));
-            } ctx.webWalking().walkTo(Redberry_Bushes.getRandomTile());
-        } else if (ctx.inventory().getItem(1793) == null) {
-            String[] chatOptions = {"Yes please, I need woad leaves.", "How about 20 coins?"};
-            talkTo(5422,Falador_Park,chatOptions);
-        } else if ((ctx.inventory().getCount(1957) < 2)) {
-            SceneObject Onion = ctx.objects().query().id(3366).results().nearest();
-            if (Onion != null) {
-                if (Onion.interact("Pick"))
-                    Time.sleep(1_500, () -> ctx.inventory().contains(1957));
-            } if (Random.nextInt(0, 100) > 50)
-                ctx.webWalking().walkTo(Rimmington_Field.getRandomTile());
-            ctx.webWalking().walkTo(Lumbridge_Field.getRandomTile());
-        } gathered_ingredients = true;
+        else if (!ctx.inventory().containsAll(1767, 1769)) {
+            if (ctx.inventory().getCount(1951) < 3 && !ctx.inventory().contains(1763, 286)) {
+                SceneObject bush = ctx.objects().query().id(23628, 26329).results().nearest();
+                if (bush != null) {
+                    if (bush.interact("Pick-from"))
+                        Time.sleep(1_500, () -> ctx.inventory().contains(1951));
+                }
+                ctx.webWalking().walkTo(Redberry_Bushes.getRandomTile());
+            } else if (ctx.inventory().getItem(1793) == null && !ctx.inventory().contains(287,1767)) {
+                String[] chatOptions = {"Yes please, I need woad leaves.", "How about 20 coins?"};
+                talkTo(5422, Falador_Park, chatOptions);
+            } else if ((ctx.inventory().getCount(1957) < 2) && !ctx.inventory().contains(1765, 286)) {
+                if (Random.nextInt(0, 100) > 50)
+                    interactObject(Rimmington_Field, 3366, "Pick");
+                interactObject(Lumbridge_Field, 3366, "Pick");
+            }
+        }
     }//Working
 
-    private boolean gathered_dyes = false;
     private void getDyes() {
         Vars.State = "Getting the Dyes.";
-        if (!ctx.inventory().contains(1763)) {
-            String[] chatOptions = {"Can you make dyes for me please?", "What do you need to make red dye?",
-                        "Okay, make me some red dye please."};
-            talkTo(4284,Aggie_House,chatOptions);
-        } else if (!ctx.inventory().contains(1765)) {
-            String[] chatOptions = {"Can you make dyes for me please?", "What do you need to make yellow dye?",
-                        "Okay, make me some yellow dye please."};
-            talkTo(4284,Aggie_House,chatOptions);
-        } else if (ctx.inventory().containsAll(1763,1765)) {
-            ctx.inventory().interactItem("Use", 1763);
-            ctx.inventory().selectItem(1765);
-        } else if (!ctx.inventory().contains(1767)) {
-            String[] chatOptions = {"Can you make dyes for me please?", "What do you need to make blue dye?",
+        if (!ctx.inventory().contains(286)){
+            if (!ctx.inventory().contains(1769))
+                if (!ctx.inventory().contains(1763)) {
+                    String[] chatOptions = {"Can you make dyes for me please?", "What do you need to make red dye?",
+                            "Okay, make me some red dye please."};
+                    talkTo(4284, Aggie_House, chatOptions);
+                } else if (!ctx.inventory().contains(1765)) {
+                    String[] chatOptions = {"Can you make dyes for me please?", "What do you need to make yellow dye?",
+                            "Okay, make me some yellow dye please."};
+                    talkTo(4284, Aggie_House, chatOptions);
+                }
+                ctx.inventory().interactItem("Use", 1763);
+                ctx.inventory().selectItem(1765);
+        }else if (!ctx.inventory().contains(287))
+            if (!ctx.inventory().contains(1767)) {
+                String[] chatOptions = {"Can you make dyes for me please?", "What do you need to make blue dye?",
                         "Okay, make me some blue dye please."};
-            talkTo(4284,Aggie_House,chatOptions);
-        } gathered_dyes = true;
-    }
+                talkTo(4284, Aggie_House, chatOptions);
+            }
+        }
 
-    private boolean mail_dyed = false;
     private void dyeMail() {
         Vars.State = "Dyeing the Goblin mail";
         if (!ctx.inventory().containsAll(288, 287, 286)) {
@@ -153,7 +146,7 @@ public class GoblinDiplomacy extends Quest {
             ctx.inventory().selectItem(288);
             ctx.inventory().interactItem("Use", 1767);
             ctx.inventory().selectItem(288);
-        } mail_dyed = true;
+        }
     }//Working
 
     private void give_Orange() {
@@ -165,8 +158,8 @@ public class GoblinDiplomacy extends Quest {
                     ctx.inventory().interactItem("Use", 286);
                 if (goblin_general.interact("Use"))
                     Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
-            } else ctx.dialogues().selectContinue();
-        }
+            }ctx.dialogues().selectContinue();
+        } ctx.webWalking().walkTo(General_Hut.getCentralTile());
     }
 
     private void give_Blue() {
@@ -179,7 +172,7 @@ public class GoblinDiplomacy extends Quest {
                 if (goblin_general.interact("Use"))
                     Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
             } else ctx.dialogues().selectContinue();
-        }
+        } ctx.webWalking().walkTo(General_Hut.getCentralTile());
     }
 
     private void give_Brown() {
@@ -192,6 +185,6 @@ public class GoblinDiplomacy extends Quest {
                 if (goblin_general.interact("Use"))
                     Time.sleep(1_000, () -> ctx.dialogues().isDialogueOpen());
             } else ctx.dialogues().selectContinue();
-        }
+        } ctx.webWalking().walkTo(General_Hut.getCentralTile());
     }
 }

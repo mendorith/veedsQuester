@@ -30,6 +30,7 @@ public class QuestHandler {
                     break;
                 case GOBLIN_DIPLOMACY:
                     goblinDiplomacy.main();
+                    break;
                 case ROMEO_AND_JULIET:
                     romeoAndJuliet.main();
                     break;
