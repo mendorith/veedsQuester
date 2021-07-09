@@ -10,6 +10,7 @@ public class QuestHandler {
     Quest cooksAssistant;
     Quest goblinDiplomacy;
     Quest romeoAndJuliet;
+    Quest sheepShearer;
     Quest xMarksTheSpot;
 
     public QuestHandler(APIContext ctx) {
@@ -18,6 +19,7 @@ public class QuestHandler {
         this.cooksAssistant = new CooksAssistant(ctx);
         this.goblinDiplomacy = new GoblinDiplomacy(ctx);
         this.romeoAndJuliet = new RomeoAndJuliet(ctx);
+        this.sheepShearer = new SheepShearer(ctx);
         this.xMarksTheSpot = new XMarksTheSpot(ctx);
 
     }
@@ -33,6 +35,9 @@ public class QuestHandler {
                     break;
                 case ROMEO_AND_JULIET:
                     romeoAndJuliet.main();
+                    break;
+                case SHEEP_SHEARER:
+                    sheepShearer.main();
                     break;
                 case X_MARKS_THE_SPOT:
                     xMarksTheSpot.main();
