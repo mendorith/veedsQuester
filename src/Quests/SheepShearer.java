@@ -25,7 +25,7 @@ public class SheepShearer extends Quest {
 
         System.out.println(getStage(IQuestAPI.Quest.SHEEP_SHEARER));
 
-        switch (getStage(IQuestAPI.Quest.X_MARKS_THE_SPOT)) {
+        switch (getStage(IQuestAPI.Quest.SHEEP_SHEARER)) {
             case 0:
                 if (!ctx.inventory().contains(1735)) {
                     pickupItem(Fred_House, 1735);
@@ -40,8 +40,10 @@ public class SheepShearer extends Quest {
                     if (sheep != null) {
                         if (sheep.interact("Shear"))
                             Time.sleep(3_000, () -> ctx.inventory().contains(1737));
-                    }
-                    ctx.webWalking().walkTo(Sheep_Pasture.getCentralTile());
+                    } ctx.webWalking().walkTo(Sheep_Pasture.getCentralTile());
+                } else if (ctx.inventory().getCount(1759) < 20) {
+                    interactObject(Spinning_Wheel, 14669, "Spin");
+
                 }
         }
     }
