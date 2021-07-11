@@ -21,10 +21,8 @@ public class RomeoAndJuliet extends Quest{
     @Override
     public void main() {
         // Switches to next quest when completed
-        if (ctx.quests().isCompleted(IQuestAPI.Quest.ROMEO_AND_JULIET)) {
+        if (ctx.quests().isCompleted(IQuestAPI.Quest.ROMEO_AND_JULIET))
             Vars.currentQuest = null;
-            return;
-        }
 
         switch (getStage(IQuestAPI.Quest.ROMEO_AND_JULIET)) {
             case 0 :
