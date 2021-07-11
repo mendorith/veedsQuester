@@ -13,7 +13,6 @@ import data.Vars;
 
 public class GoblinDiplomacy extends Quest {
 
-
     private final Area Aggie_House = (new Area(3083, 3261, 3089, 3256));
     private final Area Falador_Park =(new Area(3023, 3383, 3028, 3375));
     private final Area General_Crate =(new Area(2959, 3515, 2961, 3514));
@@ -65,8 +64,6 @@ public class GoblinDiplomacy extends Quest {
                 break;
             }
         }
-
-
 
     private void startQuest() {
         Vars.State = "Going to start the Quest.";
