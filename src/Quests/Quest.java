@@ -25,9 +25,9 @@ public class Quest {
     // Interaction methods
     public boolean interactObject(Area location, int id, String interaction) {
         SceneObject s = ctx.objects().query().id(id).results().first();
-        if (s != null && s.canReach(ctx)) {
+        if (s != null) {
             s.interact(interaction);
-            Time.sleep(3_000, () -> !ctx.localPlayer().isAnimating() && !ctx.localPlayer().isMoving());
+            Time.sleep(10_000, () -> !ctx.localPlayer().isAnimating() && !ctx.localPlayer().isMoving());
             return true;
         } else if (location != null) {
             ctx.webWalking().walkTo(location.getCentralTile());
@@ -57,7 +57,7 @@ public class Quest {
         }
         if (!ctx.npcs().query().id(id).results().isEmpty()) {
             NPC n = ctx.npcs().query().id(id).results().nearest();
-            if (n != null) {
+            if (n != null && n.canReach(ctx)) {
                 if (!n.isVisible()) {
                     ctx.camera().turnTo(n);
                 }
@@ -113,11 +113,8 @@ public class Quest {
     public void pickupItem(Area location, int item) {
         GroundItem i = ctx.groundItems().query().id(item).reachable().results().nearest();
         if (i != null && i.canReach(ctx)) {
-            if (i != null) {
-                if (i.interact("Take")) {
-                    Time.sleep(1_000, () -> ctx.inventory().contains(item));
-                }
-            }
+            if (i.interact("Take"))
+                Time.sleep(1_000, () -> ctx.inventory().contains(item));
         } else if (!location.contains(ctx.localPlayer().getLocation())) {
             ctx.webWalking().walkTo(location.getCentralTile());
         }
