@@ -10,7 +10,6 @@ import com.epicbot.api.shared.util.Random;
 import com.epicbot.api.shared.util.time.Time;
 import data.Vars;
 
-
 public class GoblinDiplomacy extends Quest {
 
     private final Area Aggie_House = (new Area(3083, 3261, 3089, 3256));
@@ -23,9 +22,6 @@ public class GoblinDiplomacy extends Quest {
     private final Area Rimmington_Field =(new Area(2945, 3254, 2955, 3247));
     private final Area Upstairs =(new Area(2, 2955, 3497, 2955, 3497));
     private final Area Western_Hut =(new Area(2951, 3508, 2953, 3504));
-
-
-
 
     public GoblinDiplomacy(APIContext ctx) { super(ctx);}
 
