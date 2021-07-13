@@ -47,7 +47,7 @@ public class SheepShearer extends Quest {
                         Vars.State = "Shearing the sheep.";
                         if (sheep != null && sheep.canReach(ctx)) {
                             sheep.interact();
-                            Time.sleep(3_000, () -> !ctx.localPlayer().isAnimating());
+                            Time.sleep(3_000, () -> !ctx.localPlayer().isAnimating() && !ctx.localPlayer().isMoving());
                         } ctx.webWalking().walkTo(Sheep_Pasture.getCentralTile());
                     } else {
                         Vars.State = "Spinning the Wool.";
