@@ -37,7 +37,6 @@ public class SheepShearer extends Quest {
                 talkTo(732, Fred_House, chatOptions);
                 break;
             case 1:
-
                 if (ctx.inventory().getCount(1759) < 20) {
                     if (!ctx.inventory().contains(1735)) {
                         Vars.State = "Getting some Shears.";
