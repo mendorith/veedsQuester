@@ -67,9 +67,11 @@ public class SheepShearer extends Quest {
                         }
                     }
                 }
+                break;
             case 20:
                 if (ctx.dialogues().canContinue())
                     ctx.dialogues().selectContinue();
+                break;
         }
     }
 }
