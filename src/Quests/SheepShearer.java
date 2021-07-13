@@ -3,7 +3,6 @@ package Quests;
 import com.epicbot.api.shared.APIContext;
 import com.epicbot.api.shared.entity.NPC;
 import com.epicbot.api.shared.entity.SceneObject;
-import com.epicbot.api.shared.entity.WidgetGroup;
 import com.epicbot.api.shared.methods.IQuestAPI;
 import com.epicbot.api.shared.model.Area;
 import com.epicbot.api.shared.model.Tile;
@@ -27,8 +26,6 @@ public class SheepShearer extends Quest {
         SceneObject upstairsDoor = ctx.objects().query().id(1543).actions("Open").located(new Tile(3207, 3214, 1)).results().nearest();
         if (ctx.quests().isCompleted(IQuestAPI.Quest.SHEEP_SHEARER))
             Vars.currentQuest = null;
-
-        System.out.println(getStage(IQuestAPI.Quest.SHEEP_SHEARER));
 
         switch (getStage(IQuestAPI.Quest.SHEEP_SHEARER)) {
             case 0:
@@ -66,7 +63,7 @@ public class SheepShearer extends Quest {
                         if (Door != null)
                             Door.interact();
                         else {
-                            String[] turnIn = {"I need to talk to you about shearing these sheep!", "That's the last of them."};
+                            String[] turnIn = {"I need to talk to you about shearing these sheep!"};
                             talkTo(732, Fred_House, turnIn);
                         }
                     }
