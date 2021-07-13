@@ -5,6 +5,7 @@ public enum QuestsInfo {
     ROMEO_AND_JULIET(),
     X_MARKS_THE_SPOT(),
     GOBLIN_DIPLOMACY(),
-    SHEEP_SHEARER()
+    SHEEP_SHEARER(),
+    RUNE_MYSTERIES(),
     ;
 }

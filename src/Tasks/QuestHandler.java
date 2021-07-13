@@ -12,6 +12,7 @@ public class QuestHandler {
     Quest xMarksTheSpot;
     Quest sheepShearer;
     Quest goblinDiplomacy;
+    Quest runeMysteries;
 
     public QuestHandler(APIContext ctx) {
         this.ctx = ctx;
@@ -21,6 +22,7 @@ public class QuestHandler {
         this.xMarksTheSpot = new XMarksTheSpot(ctx);
         this.goblinDiplomacy = new GoblinDiplomacy(ctx);
         this.sheepShearer = new SheepShearer(ctx);
+        this.runeMysteries = new RuneMysteries(ctx);
 
     }
 
@@ -41,6 +43,8 @@ public class QuestHandler {
                     break;
                 case SHEEP_SHEARER:
                     sheepShearer.main();
+                case RUNE_MYSTERIES:
+                    runeMysteries.main();
             }
         } else {
             ctx.script().stop("All quests have been completed.");
