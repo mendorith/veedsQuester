@@ -7,5 +7,6 @@ public enum QuestsInfo {
     GOBLIN_DIPLOMACY(),
     SHEEP_SHEARER(),
     RUNE_MYSTERIES(),
+    WITCHS_POTION(),
     ;
 }

@@ -20,7 +20,7 @@ public class CooksAssistant extends Quest {
         MILL_UPPPER(new Area(2, 3163, 3310, 3170, 3303)),
         MILL_LOWER(new Area(3162, 3310, 3170, 3303)),
         LUMBRIDGE_CASTLE(new Area(3206, 3216, 3211, 3213)),
-        LUMBRIDGE_CELLAR(new Area(3216, 9625, 3213, 9623))
+        LUMBRIDGE_CELLAR(new Area(3208, 9616, 3218, 9624))
         ;
 
         final Area area;

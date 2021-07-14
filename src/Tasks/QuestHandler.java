@@ -13,6 +13,7 @@ public class QuestHandler {
     Quest sheepShearer;
     Quest goblinDiplomacy;
     Quest runeMysteries;
+    Quest witchsPotion;
 
     public QuestHandler(APIContext ctx) {
         this.ctx = ctx;
@@ -23,6 +24,7 @@ public class QuestHandler {
         this.goblinDiplomacy = new GoblinDiplomacy(ctx);
         this.sheepShearer = new SheepShearer(ctx);
         this.runeMysteries = new RuneMysteries(ctx);
+        this.witchsPotion = new WitchsPotion(ctx);
 
     }
 
@@ -43,8 +45,13 @@ public class QuestHandler {
                     break;
                 case SHEEP_SHEARER:
                     sheepShearer.main();
+                    break;
                 case RUNE_MYSTERIES:
                     runeMysteries.main();
+                    break;
+                case WITCHS_POTION:
+                    witchsPotion.main();
+                    break;
             }
         } else {
             ctx.script().stop("All quests have been completed.");
