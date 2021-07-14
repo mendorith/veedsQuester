@@ -24,7 +24,7 @@ public class Quest {
 
     // Interaction methods
     public boolean interactObject(Area location, int id, String interaction) {
-        SceneObject s = ctx.objects().query().id(id).results().first();
+        SceneObject s = ctx.objects().query().id(id).results().nearest();
         if (s != null && s.canReach(ctx)) {
             s.interact(interaction);
             Time.sleep(3_000, () -> !ctx.localPlayer().isAnimating() && !ctx.localPlayer().isMoving());
@@ -89,11 +89,11 @@ public class Quest {
         }
     }
 
-    public void buyItem(Area location, String item) {
+    public void buyItem(Area location, int a, String item) {
         if (ctx.inventory().contains("Coins")) {
             if (location.contains(ctx.localPlayer().getLocation())) {
                 if (!ctx.store().isOpen()) {
-                    NPC n = ctx.npcs().query().nameMatches("Shop keeper").results().first();
+                    NPC n = ctx.npcs().query().id(a).results().first();
                     if (n != null) {
                         if (n.interact("Trade")) {
                             Time.sleep(1_000, () -> ctx.store().isOpen());
@@ -103,10 +103,10 @@ public class Quest {
                     ctx.store().buyOne(item);
                 }
             } else if (!location.contains(ctx.localPlayer().getLocation())) {
-                ctx.webWalking().walkTo(location.getRandomTile());
+                ctx.webWalking().walkTo(location.getCentralTile());
             }
         } else if (!ctx.inventory().contains("Coins")) {
-            withdraw(item, 500);
+            withdraw("Coins", 500);
         }
     }
 
