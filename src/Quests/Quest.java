@@ -22,10 +22,16 @@ public class Quest {
         Vars.quests = null;
     }
 
+
+
+
     // Interaction methods
     public void interactObject(Area location, int id, String interaction) {
         SceneObject s = ctx.objects().query().id(id).results().first();
         if (s != null && s.canReach(ctx)) {
+            if (!s.isVisible()) {
+                ctx.camera().turnTo(s);
+            }
             if (interaction == null) {
                 s.interact();
             } else {
@@ -90,8 +96,11 @@ public class Quest {
         if (ctx.inventory().contains("Coins")) {
             if (location.contains(ctx.localPlayer().getLocation())) {
                 if (!ctx.store().isOpen()) {
-                    NPC n = ctx.npcs().query().nameMatches("Shop keeper").results().first();
+                    NPC n = ctx.npcs().query().nameMatches("Shop keeper").results().nearest();
                     if (n != null) {
+                        if (!n.isVisible()) {
+                            ctx.camera().turnTo(n);
+                        }
                         if (n.interact("Trade")) {
                             Time.sleep(1_000, () -> ctx.store().isOpen());
                         }
@@ -110,15 +119,18 @@ public class Quest {
     public void pickupItem(Area location, int item) {
         GroundItem i = ctx.groundItems().query().id(item).reachable().results().nearest();
         if (i != null && i.canReach(ctx)) {
-            if (i != null) {
-                if (i.interact("Take")) {
-                    Time.sleep(1_000, () -> ctx.inventory().contains(item));
-                }
+            if (!i.isVisible()) {
+                ctx.camera().turnTo(i);
+            }
+            if (i.interact("Take")) {
+                Time.sleep(1_000, () -> ctx.inventory().contains(item));
             }
         } else if (!location.contains(ctx.localPlayer().getLocation())) {
             ctx.webWalking().walkTo(location.getCentralTile());
         }
     }
+
+
 
 
     // Dialogue methods
@@ -139,6 +151,8 @@ public class Quest {
         }
         return null;
     }
+
+
 
 
     // Stage methods
