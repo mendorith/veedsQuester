@@ -23,25 +23,22 @@ public class Quest {
     }
 
     // Interaction methods
-    public boolean interactObject(Area location, int id, String interaction) {
+    public void interactObject(Area location, int id, String interaction) {
         SceneObject s = ctx.objects().query().id(id).results().first();
         if (s != null && s.canReach(ctx)) {
-            s.interact(interaction);
+            if (interaction == null) {
+                s.interact();
+            } else {
+                s.interact(interaction);
+            }
             Time.sleep(3_000, () -> !ctx.localPlayer().isAnimating() && !ctx.localPlayer().isMoving());
-            return true;
-        } else if (location != null) {
-            ctx.webWalking().walkTo(location.getCentralTile());
-            return true;
         } else {
-            return false;
+            ctx.webWalking().walkTo(location.getCentralTile());
         }
     }
     // Overload
-    public boolean interactObject(int id, String interaction) {
-        return interactObject(null, id, interaction);
-    }
-    public boolean interactObject(int id) {
-        return interactObject(null, id, "");
+    public void interactObject(Area location, int id) {
+        interactObject(location, id, null);
     }
 
     public void talkTo(int id, Area location, String[] chatOptions) {
