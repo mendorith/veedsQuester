@@ -87,8 +87,11 @@ public class GoblinDiplomacy extends Quest {
                     interactObject(Ground_Level, 16450, "Climb-up");
                 interactObject(Upstairs, 16561, "Search");
             } else {
-                interactObject(16556, "Climb-down");
-                gatheredMail = true;
+                if (Upstairs.contains(ctx.localPlayer().getLocation())) {
+                    interactObject(Ground_Level, 16450, "Climb-down");
+                } else {
+                    gatheredMail = true;
+                }
             }
         }
     }//Working
