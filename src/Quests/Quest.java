@@ -22,26 +22,29 @@ public class Quest {
         Vars.quests = null;
     }
 
+
+
+
     // Interaction methods
-    public boolean interactObject(Area location, int id, String interaction) {
-        SceneObject s = ctx.objects().query().id(id).results().nearest();
+    public void interactObject(Area location, int id, String interaction) {
+        SceneObject s = ctx.objects().query().id(id).results().first();
         if (s != null && s.canReach(ctx)) {
-            s.interact(interaction);
+            if (!s.isVisible()) {
+                ctx.camera().turnTo(s);
+            }
+            if (interaction == null) {
+                s.interact();
+            } else {
+                s.interact(interaction);
+            }
             Time.sleep(3_000, () -> !ctx.localPlayer().isAnimating() && !ctx.localPlayer().isMoving());
-            return true;
-        } else if (location != null) {
-            ctx.webWalking().walkTo(location.getCentralTile());
-            return true;
         } else {
-            return false;
+            ctx.webWalking().walkTo(location.getCentralTile());
         }
     }
     // Overload
-    public boolean interactObject(int id, String interaction) {
-        return interactObject(null, id, interaction);
-    }
-    public boolean interactObject(int id) {
-        return interactObject(null, id, "");
+    public void interactObject(Area location, int id) {
+        interactObject(location, id, null);
     }
 
     public void talkTo(int id, Area location, String[] chatOptions) {
@@ -89,12 +92,15 @@ public class Quest {
         }
     }
 
-    public void buyItem(Area location, int a, String item) {
+    public void buyItem(Area location, String item) {
         if (ctx.inventory().contains("Coins")) {
             if (location.contains(ctx.localPlayer().getLocation())) {
                 if (!ctx.store().isOpen()) {
-                    NPC n = ctx.npcs().query().id(a).results().first();
+                    NPC n = ctx.npcs().query().nameMatches("Shop keeper").results().nearest();
                     if (n != null) {
+                        if (!n.isVisible()) {
+                            ctx.camera().turnTo(n);
+                        }
                         if (n.interact("Trade")) {
                             Time.sleep(1_000, () -> ctx.store().isOpen());
                         }
@@ -103,25 +109,28 @@ public class Quest {
                     ctx.store().buyOne(item);
                 }
             } else if (!location.contains(ctx.localPlayer().getLocation())) {
-                ctx.webWalking().walkTo(location.getCentralTile());
+                ctx.webWalking().walkTo(location.getRandomTile());
             }
         } else if (!ctx.inventory().contains("Coins")) {
-            withdraw("Coins", 500);
+            withdraw(item, 500);
         }
     }
 
     public void pickupItem(Area location, int item) {
         GroundItem i = ctx.groundItems().query().id(item).reachable().results().nearest();
         if (i != null && i.canReach(ctx)) {
-            if (i != null) {
-                if (i.interact("Take")) {
-                    Time.sleep(1_000, () -> ctx.inventory().contains(item));
-                }
+            if (!i.isVisible()) {
+                ctx.camera().turnTo(i);
+            }
+            if (i.interact("Take")) {
+                Time.sleep(1_000, () -> ctx.inventory().contains(item));
             }
         } else if (!location.contains(ctx.localPlayer().getLocation())) {
             ctx.webWalking().walkTo(location.getCentralTile());
         }
     }
+
+
 
 
     // Dialogue methods
@@ -142,6 +151,8 @@ public class Quest {
         }
         return null;
     }
+
+
 
 
     // Stage methods
