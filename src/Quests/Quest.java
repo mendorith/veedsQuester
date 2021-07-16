@@ -92,11 +92,11 @@ public class Quest {
         }
     }
 
-    public void buyItem(Area location, String item) {
+    public void buyItem(Area location, int id, String item) {
         if (ctx.inventory().contains("Coins")) {
             if (location.contains(ctx.localPlayer().getLocation())) {
                 if (!ctx.store().isOpen()) {
-                    NPC n = ctx.npcs().query().nameMatches("Shop keeper").results().nearest();
+                    NPC n = ctx.npcs().query().id(id).results().nearest();
                     if (n != null) {
                         if (!n.isVisible()) {
                             ctx.camera().turnTo(n);
